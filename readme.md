@@ -37,7 +37,7 @@ The GUI offers configuration for the various actions and settings. Clicking the 
 !["Program settings"](media/d2qol_ui_settings.png)
 
 |Setting|Desc|
-|--|--|
+|---|---|
 |Cube (px)|x,y location of cube relative to window origin|
 |Transmute (px)|x,y location of transmute button relative to window origin|
 |Inventory Pane|In game shortcut key to open the inventory pane|
