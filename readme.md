@@ -27,7 +27,7 @@ The GUI offers configuration for the various actions and settings. Clicking the 
 !["Quality of Life actions"](media/d2qol_ui_actions.png)
 
 |Action|Desc|
-|--|--|
+|---|---|
 |Open Inventory & Cube|Opens inventory and cube|
 |Cube Transmute|Activate Cube Transmute|
 |Place In Cube|Places currently held item into cube|
@@ -50,11 +50,11 @@ This was designed and tested under 800x600 resolution and DDraw. There is no rea
 Everything is based on user defined x,y locations, and the sequence of UI commands is nearly identical to human execution. *What can go wrong?™*
 
 #### FAQ
-**Q**: Run As Administrator? How can I trust you?
+**Q**: Run As Administrator? How can I trust you?  
 **A**: src/
 
-**Q**: This thing is broken and/or sucks balls
+**Q**: This thing is broken and/or sucks balls  
 **A**: Yes.
 
-**Q**: 56k? Really?
+**Q**: 56k? Really?  
 **A**: I know, I know; I splurged. Most ISPs barely support V.90 modems, bastards are only facilitating 28.8k right now.
