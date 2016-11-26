@@ -1,7 +1,6 @@
-Gui, New, hwnd_tmp, d2q
+Gui, New, hwnd_tmp, d2qol
 hwnd_main := _tmp
 
-; Gui, Color, cccccc
 gui, font, s11
 
 Gui, add, Tab2, , Actions|Settings|About
