@@ -19,7 +19,7 @@ action_list.push({"label": "Drop Item", "desc": "Drops currently held item onto 
 
 ; Set default config
 config_file := "d2qol.json"
-global config := {"coords": {"cube": {"x": 681, "y": 437 }, "transmute": {"x": 240, "y": 360 } }, "keybinds": {"action": {"Cube_Transmute": "F2", "Drop_Item": "F4", "Open_Inv_Cube": "F1", "Place_In_Cube": "F3"}, "game": {"inv": "b"} } }
+global config := {"coords": {"cube": {"x": 0, "y": 0 }, "transmute": {"x": 0, "y": 0 } }, "keybinds": {"action": {"Cube_Transmute": "F2", "Drop_Item": "F4", "Open_Inv_Cube": "F1", "Place_In_Cube": "F3"}, "game": {"inv": "b"} } }
 
 
 ; Override config if config file exists
