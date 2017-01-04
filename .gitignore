@@ -1,3 +1,6 @@
+# Ignore config
+d2qol.json
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

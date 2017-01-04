@@ -89,7 +89,7 @@ unregister_hk(hk) {
 
 register_hk(hk, fn) {
 
-	Hotkey, % "~"hk, % fn
+	Hotkey, % "~"hk, % fn, On
 }
 
 
