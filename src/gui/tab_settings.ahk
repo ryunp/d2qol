@@ -12,7 +12,7 @@ hwnd_transmutecoords := _hwnd
 
 ; In-game Inventory Keybind
 Gui, add, text, % "Section w100 xm+" tabPadding " y+" tabPadding, Inventory Pane
-Gui, add, button, hwnd_hwnd ys-5 w75 ggame_inv_handler, % config.keybinds.game.inv
+Gui, add, button, hwnd_hwnd ys-5 w75 ggame_inv_handler, % config.game.keybinds.inventory
 hwnd_gameinv := _hwnd
 
 
@@ -63,7 +63,7 @@ game_inv_handler() {
 
 	if (newHK) {
 		
-		config.keybinds.game.inv := newHK
+		config.game.keybinds.inventory := newHK
 
 		; Update view
 		GuiControl, , % hwnd_gameinv, % newHK
