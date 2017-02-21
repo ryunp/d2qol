@@ -1,5 +1,5 @@
-Gui, New, hwnd_tmp, d2qol
-hwnd_main := _tmp
+Gui, New, hwnd_hwnd, d2qol
+hwnd_main := _hwnd
 
 gui, font, s11
 
