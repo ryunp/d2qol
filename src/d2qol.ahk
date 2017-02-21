@@ -32,7 +32,7 @@ if (FileExist(config_file)) {
 
 ; Register actions with user hotkeys
 for idx, action in action_list
-	register_action_hk(action)
+	register_hk(config.keybinds.action[action.fn], action.fn)
 
 
 ; Build/show gui
@@ -40,7 +40,6 @@ for idx, action in action_list
 #Include, main.ahk
 #include, ..\
 OnExit, exit_sequence
-
 
 return ; END AUTOEXEC
 
@@ -56,31 +55,7 @@ return ; END AUTOEXEC
 
 
 
-; Misc app logic
-update_action_hk(action, newHK) {
-
-	unregister_hk(config.keybinds.action[action.fn])
-	config.keybinds.action[action.fn] := newHK
-	register_hk(newHK, action.fn)
-}
-
-
-register_action_hk(action) {
-
-	key := config.keybinds.action[action.fn]
-	register_hk(key, action.fn)
-}
-
-
-revert_mouse(fn) {
-
-	SetDefaultMouseSpeed, 0
-
-	MouseGetPos, mX, mY
-	fn.Call()	
-	MouseMove, % mX, % mY
-}
-
+; Helpers
 unregister_hk(hk) {
 
 	Hotkey, % "~"hk, Off
