@@ -1,3 +1,9 @@
+; Run as Admin guard
+if not A_IsAdmin {
+	Msgbox You must 'Run As Administrator' for this to work
+	ExitApp
+}
+
 ; Process settings
 #NoEnv
 SetDefaultMouseSpeed, 0
