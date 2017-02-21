@@ -14,13 +14,13 @@ Many gameplay activities are based on RNG, requiring huge amounts repitition. De
 Download [build/d2qol.exe](build/d2qol.exe).
 
 ### Usage
-Run d2qol.exe **as administrator**. If you fail to use **Run As Administrator**, the AHK process will not be able to interact with the Diablo II process rendering this program flacid.
+Run d2qol.exe **as administrator**. The program will immediately exit if this condition is not true.
 
 Make sure to set Cube location and Transmute location for your own setup, as Actions rely on these coordinates.
 
 Action hotkeys will only be active/usable when the Diablo II window is focused.
 
-On exiting the program, settings are saved to the file d2qol.json.
+On exiting the program, settings are saved to a file in the scripts running directory named *d2qol.json*.
 
 ### Gui
 The GUI offers configuration for the various actions and settings. Clicking the buttons will prompt with further configuration input.
