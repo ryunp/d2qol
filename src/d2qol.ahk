@@ -40,7 +40,7 @@ if (FileExist(config_file)) {
 
 ; Register actions with user hotkeys
 for idx, action in action_list
-	register_hk(config.keybinds.action[action.fn], action.fn)
+	register_hk(config.actions[action.fn].hotkey, action.fn)
 
 
 ; Build/show gui
