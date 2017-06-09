@@ -1,14 +1,9 @@
 ## d2QoL
 Diablo II is old. The interface is old. Carpal Tunnel is real. This AutoHotKey program provides assistance for common tasks.
 
-The goal is to replace the small, tedious, repetitive clicking sequences.  
+The goal is to replace the small, tedious, repetitive clicking sequences involving the cube.
 
-Many gameplay activities are based on RNG, requiring huge amounts repitition. Despite being 'braindead' activities, the compounding nature adds up quickly.
-
-![Action: Open Inventory & Cube](media/d2qol_opencube.gif)
-![Action: Cube Transmute](media/d2qol_cubetransmute.gif)
-![Action: Place In Cube](media/d2qol_placeincube.gif)
-![Action: Drop Item](media/d2qol_dropitem.gif)
+![Action: Open Inventory & Cube](media/d2qol_usage.gif)
 
 ### Install
 Download [build/d2qol.exe](build/d2qol.exe).
