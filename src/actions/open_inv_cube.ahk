@@ -7,7 +7,7 @@ Open_Inv_Cube() {
 	MouseGetPos, x, y
 
 	; Open inventory pane
-	Send, % config.keybinds.game.inv
+	Send, % config.game.keybinds.inventory
 
 	; move to cube location
 	MouseMove % point.x, % point.y
@@ -16,7 +16,7 @@ Open_Inv_Cube() {
 	Click Right
 
 	; When inventory is already open:
-	Send, % config.keybinds.game.inv
+	Send, % config.game.keybinds.inventory
 	MouseMove % point.x, % point.y
 	Click Right
 	
