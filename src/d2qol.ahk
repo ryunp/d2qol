@@ -25,8 +25,8 @@ Hotkey, IfWinActive, Diablo II ahk_class Diablo II
 global action_list := []
 action_list.push({"id": "Open_Inv_Cube", "label": "Open Inv `& Cube", "desc": "Opens inventory and cube"})
 action_list.push({"id": "Cube_Transmute", "label": "Cube Transmute", "desc": "Activate Cube Transmute"})
-action_list.push({"id": "Place_In_Cube", "label": "Place In Cube", "desc": "Places currently held item into cube"})
-action_list.push({"id": "Drop_Item", "label": "Drop Item", "desc": "Drops currently held item onto ground"})
+action_list.push({"id": "Place_In_Cube", "label": "Place In Cube", "desc": "Places item into cube"})
+action_list.push({"id": "Drop_Item", "label": "Drop Item", "desc": "Drops item onto ground"})
 action_list.push({"id": "Repeat_Clicks", "label": "Clicker", "desc": "Continuous clicking"})
 
 
