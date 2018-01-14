@@ -2,6 +2,9 @@ Open_Inv_Cube() {
 
 	point := config.coords.cube
 
+	; In case inv is already open
+	Send, {Space}
+
 	; Ignore user, save mouse
 	BlockInput, On
 	MouseGetPos, x, y
@@ -12,15 +15,10 @@ Open_Inv_Cube() {
 	; move to cube location
 	MouseMove % point.x, % point.y
 
-	; Use item
+	; Open cube
 	Click Right
-
-	; When inventory is already open:
-	Send, % config.game.keybinds.inventory
-	MouseMove % point.x, % point.y
-	Click Right
-	
 	sleep % 42 ; wait 1 in game frame
+	
 	MouseMove, % x, % y
 	BlockInput, Off
 }

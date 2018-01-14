@@ -10,7 +10,7 @@ Place_In_Cube() {
 
 	if not (config.game.manualpickup) {
 		Click
-		sleep 150
+		sleep 126
 	}
 
 	; Ignore user, save mouse
