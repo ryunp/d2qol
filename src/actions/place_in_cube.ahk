@@ -22,6 +22,7 @@ Place_In_Cube() {
 	MouseMove % point.x, % point.y - 50   ;  p1
 	MouseMove % point.x, % point.y, 2     ;  p2
 	SendMode Input                        ; set back to teleporting
+	sleep, 84
 	
 	; Click at location
 	Click
