@@ -4,8 +4,14 @@
 ; window and is what triggers the d2 engine's recalculation for item hitbox(?).
 ; Or something like that? Teleporting is bad for large items and their hitbox.
 Place_In_Cube() {
+	global
 
 	point := config.coords.cube
+
+	if not (config.game.manualpickup) {
+		Click
+		sleep 150
+	}
 
 	; Ignore user, save mouse
 	BlockInput, On
@@ -13,7 +19,7 @@ Place_In_Cube() {
 	
 	; Hitbox workaround
 	SendMode Event                        ; trigger mouse moving
-	MouseMove % point.x, % point.y - 25   ;  p1
+	MouseMove % point.x, % point.y - 50   ;  p1
 	MouseMove % point.x, % point.y, 2     ;  p2
 	SendMode Input                        ; set back to teleporting
 	

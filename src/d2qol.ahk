@@ -34,7 +34,7 @@ action_list.push({"id": "Repeat_Clicks", "label": "Clicker", "desc": "Continuous
 global config_file := "d2qol.json"
 global config := {"coords":{"cube":{"x":0,"y":0},"transmute":{"x":0,"y":0}}
 	,"actions":{"Open_Inv_Cube":{"enabled":1,"hotkey":"F1"},"Cube_Transmute":{"enabled":1,"hotkey":"F2"},"Place_In_Cube":{"enabled":1,"hotkey":"F3"},"Drop_Item":{"enabled":1,"hotkey":"F4"},"Repeat_Clicks":{"enabled":1,"hotkey":"F5","quantity":60,"delay":250,"disablemouse":1}}
-	,"game":{"keybinds":{"inventory":"b"}}}
+	,"game":{"keybinds":{"inventory":"b"},"manualpickup":0}}
 
 
 ; Override config if config file exists

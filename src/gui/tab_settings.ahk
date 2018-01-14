@@ -11,11 +11,11 @@ Gui, Add, GroupBox, Section h100 w140, Clicker
 	gui, add, text, ys+3, Delay (ms)
 
 	; Disable mouse when running
-	gui, add, Checkbox, % "hwnd_ui_clicker_disablemouse AltSubmit xs h20 g_cb_clicker_disablemouse" , Disable Mouse
+	gui, add, Checkbox, % "hwnd_ui_clicker_disablemouse AltSubmit xs h20 g_cb_clicker_disablemouse", Disable Mouse
 	GuiControl, , % _ui_clicker_disablemouse, % cfg.disablemouse
 
 ; UI Group for in-game operational settings
-Gui, Add, GroupBox, Section h100 w200 xm+160 ym+28, In-Game
+Gui, Add, GroupBox, Section h130 w200 xm+160 ym+28, In-Game
 
 	; Cube Location
 	cfg := config.coords.cube
@@ -33,6 +33,11 @@ Gui, Add, GroupBox, Section h100 w200 xm+160 ym+28, In-Game
 	cfg := config.game.keybinds
 	Gui, add, button, Section hwnd_ui_gameinventory_keybind xs w70 h20 g_cb_game_inv, % cfg.inventory
 	Gui, add, text, ys+3, Toggle Inventory
+
+	; Manual item pickup
+	cfg := config.game
+	Gui, add, Checkbox, % "Section hwnd_ui_manualpickup AltSubmit xs h20 g_cb_manualpickup", Manual Item Pickup
+	GuiControl, , % _ui_manualpickup, % cfg.manualpickup
 
 
 
@@ -117,4 +122,13 @@ _cb_game_inv() {
 		; Update view
 		GuiControl, , % _ui_gameinventory_keybind, % newHK
 	}
+}
+
+
+_cb_manualpickup() {
+	global
+
+	cfg := config.game
+	GuiControlGet, state,, % _ui_manualpickup
+    cfg.manualpickup := state
 }
