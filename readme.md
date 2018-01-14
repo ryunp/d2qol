@@ -18,9 +18,9 @@ On exiting the program, settings are saved to a file in the scripts running dire
 ### Gui
 The GUI offers configuration for the various actions and settings. Clicking the buttons will prompt with further configuration input.
 
-!["Quality of Life actions"](media/d2qol_ui_keybinds.png)
+!["Quality of Life actions"](media/d2qol_keybinds.png)
 
-!["Program settings"](media/d2qol_ui_settings.png)
+!["Program settings"](media/d2qol_settings.png)
 
 Setting | Description
 --- | ---
