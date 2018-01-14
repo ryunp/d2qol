@@ -1,18 +1,15 @@
-Gui, New, hwnd_hwnd, d2qol
-hwnd_main := _hwnd
+Gui, New, hwnd_win_main +labelWinMain, d2qol
 
-gui, font, s11
+; Help Link
+Gui, Add, Link, xm+255 ym, <a href="https://forum.median-xl.com/viewtopic.php?f=4&t=3302">Median XL Forum Thread</a>
 
-Gui, add, Tab2, , Actions|Settings|About
-tabPadding := 20
+; Tabs
+Gui, add, Tab3, xm ym w380, Keybinds|Settings
 
-Gui, Tab, Actions
+Gui, Tab, Keybinds
 #Include, tab_actions.ahk
 
 Gui, Tab, Settings
 #Include, tab_settings.ahk
-
-Gui, Tab, About
-#Include, tab_about.ahk
 
 Gui, Show

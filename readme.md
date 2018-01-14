@@ -1,43 +1,32 @@
 ## d2QoL
-Diablo II is old. The interface is old. Carpal Tunnel is real. This AutoHotKey program provides assistance for common tasks.
+Median XL's end-game requires highly repetitive crafting mechanics. Working with the cube slowly not only eats away at game time, but can also cause physical stress on the wrists and fingers. Since the nature of these actions is so well defined, it makes perfect target for automation. This was designed foremost as a crafting QoL utility, but it easily extends out to enhance normal gameplay.
 
-The goal is to replace the small, tedious, repetitive clicking sequences involving the cube.
+This utility does nothing more than clicks on command in locations you have specified. There is no memory peeking, no gameplay logic, nothing outside the capabilities a human can perform.
 
-![Action: Open Inventory & Cube](media/d2qol_usage.gif)
+![Reducing shrines into vessel](media/d2qol_shrines.gif)
 
 ### Install
-Download [build/d2qol.exe](build/d2qol.exe).
+Download [d2qol.exe](build/d2qol.exe).
 
 ### Usage
 Run d2qol.exe **as administrator**. The program will immediately exit if this condition is not true.
 
-Make sure to set Cube location and Transmute location for your own setup, as Actions rely on these coordinates.
+Make sure to set Cube location and Transmute location for your own setup, as various Actions rely on these coordinates.
 
 Action hotkeys will only be active/usable when the Diablo II window is focused.
+
+Actions can be manually toggled on/off.
 
 On exiting the program, settings are saved to a file in the scripts running directory named *d2qol.json*.
 
 ### Gui
 The GUI offers configuration for the various actions and settings. Clicking the buttons will prompt with further configuration input.
 
-##### Actions
-!["Quality of Life actions"](media/d2qol_ui_actions.png)
-
-|Action|Desc|
-|---|---|
-|Open Inventory & Cube|Opens inventory and cube|
-|Cube Transmute|Activate Cube Transmute|
-|Place In Cube|Places currently held item into cube|
-|Drop Item|Drops currently held item onto ground|
+##### Action Keybinds
+!["Quality of Life actions"](media/d2qol_ui_keybinds.png)
 
 ##### Settings
 !["Program settings"](media/d2qol_ui_settings.png)
-
-|Setting|Desc|
-|---|---|
-|Cube (px)|x,y location of cube relative to window origin|
-|Transmute (px)|x,y location of transmute button relative to window origin|
-|Inventory Pane|In game shortcut key to open the inventory pane|
 
 #### TroubleShooting/Quirks/Bugs/glhf
 Some odd behavoir may occur. Most of them have been tested and fixed. Let me know if there is some faulty logic.
@@ -52,6 +41,3 @@ Everything is based on user defined x,y locations, and the sequence of UI comman
 
 **Q**: This thing is broken and/or sucks balls  
 **A**: Yes.
-
-**Q**: 56k? Really?  
-**A**: I know, I know; I splurged. Most ISPs barely support V.90 modems, bastards are only facilitating 28.8k right now.

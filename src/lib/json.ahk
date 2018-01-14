@@ -4,353 +4,220 @@
 ; NOTE: UTF-8 sequences are encoded as-is, NOT as their intended codepoint.
 
 class json {
-	prettify(Obj) {
-	    return "{`r`n" this.parseStructure(Obj,,,,,"  ") "`r`n}"
-	}
-	
-	parseStructure(Obj, NewRow:=" `r`n", Equal:=": ", Indent:="  ", Depth:=99, CurIndent:="", KVpair:=1) {
-		for k,v in Obj {
-	    	; array of associative array
-	       	if ((isObject(v)) && (depth>1)) {
-	       		ToReturn .= CurIndent . k . Equal
-	    		if (v.MaxIndex() > 0) {
-	    			; array
-	    			ToReturn .= " [" NewRow
-	    			ToReturn .= this.parseStructure(v, NewRow, Equal, Indent, Depth-1, CurIndent . Indent, 0)
-	    			if (k < v.MaxIndex()-1)
-	    				ToReturn .= ","
-	    			ToReturn .= NewRow . CurIndent . "]"
-	    		} else {
-	    			; associative array
-	    			ToReturn .= " {" NewRow
-	    			ToReturn .= this.parseStructure(v, NewRow, Equal, Indent, Depth-1, CurIndent . Indent, 1)
-	    			ToReturn .= NewRow . CurIndent "}"
-		    	}
-	    	} else {
-	    		; primative (string, int, etc)
-	    		if (KVpair)
-	    			ToReturn .= CurIndent """" k """" Equal . v
-		    	else
-		    		ToReturn .= CurIndent . v
-	    	}
 
-	    	ToReturn .= NewRow
-	        ;ToReturn .= CurIndent . k . (IsObject(v) && depth>1 ? NewRow . this.ExploreObj(v, NewRow, Equal, Indent, Depth-1, CurIndent . Indent) :Equal . v) . NewRow
-	    }
-	    return RTrim(ToReturn, NewRow)
-	}
-	
-	write( obj ) {
-		return this.fromObj( obj )
-	}
-	fromObj( obj ) { ;_json_fromobj
+    prettify(Obj) {
+    	str := this.parseStructure(Obj)
 
-		If IsObject( obj )
-		{
-			isarray := 0 ; an empty object could be an array... but it ain't, says I
-			for key in obj
-				if ( key != ++isarray )
-				{
-					isarray := 0
-					Break
-				}
+    	if (Obj.MaxIndex() > 0)
+    		str := "[`r`n" str "`r`n]"
+    	else
+    		str := "{`r`n" str "`r`n}"
 
-			for key, val in obj
-				str .= ( A_Index = 1 ? "" : "," ) ( isarray ? "" : this.write( key ) ":" ) this.write( val )
+        return str
+    }
+    
+    parseStructure(Obj, Depth:=99, CurIndent:="", NL:="`r`n", Equal:=":", Indent:="`t") {
+    	; Adjust indent
+    	CurIndent := CurIndent . Indent
 
-			return isarray ? "[" str "]" : "{" str "}"
-		}
-		else if obj IS NUMBER
-			return obj
-	;	else if obj IN null,true,false ; AutoHotkey does not natively distinguish these
-	;		return obj
+    	; Get iteration count
+        for k in Obj
+            len := A_Index
 
-		; Encode control characters, starting with backslash.
-		StringReplace, obj, obj, \, \\, A
-		StringReplace, obj, obj, % Chr(08), \b, A
-		StringReplace, obj, obj, % A_Tab, \t, A
-		StringReplace, obj, obj, `n, \n, A
-		StringReplace, obj, obj, % Chr(12), \f, A
-		StringReplace, obj, obj, `r, \r, A
-		StringReplace, obj, obj, ", \", A
-		StringReplace, obj, obj, /, \/, A
-		While RegexMatch( obj, "[^\x20-\x7e]", key )
-		{
-			str := Asc( key )
-			val := "\u" . Chr( ( ( str >> 12 ) & 15 ) + ( ( ( str >> 12 ) & 15 ) < 10 ? 48 : 55 ) )
-					. Chr( ( ( str >> 8 ) & 15 ) + ( ( ( str >> 8 ) & 15 ) < 10 ? 48 : 55 ) )
-					. Chr( ( ( str >> 4 ) & 15 ) + ( ( ( str >> 4 ) & 15 ) < 10 ? 48 : 55 ) )
-					. Chr( ( str & 15 ) + ( ( str & 15 ) < 10 ? 48 : 55 ) )
-			StringReplace, obj, obj, % key, % val, A
-		}
-		return """" obj """"
-	} ; this.write( obj )
+        ; Iterate over each item
+        for k,v in Obj {
 
-	; Uses a two-pass iterative approach to deserialize a json string
-	read( str ) {
-		return this.toObj( str )
-	}
-	toObj( str ) { ;_json_toobj
+			; Determine value scheme
+            if (Obj.MaxIndex() > 0) {
+            	; In array
+                ToReturn .= CurIndent
+            } else {
+                ; In dictionary
+                ToReturn .= CurIndent . """" k """" . Equal . " "
+            }
 
-		quot := """" ; firmcoded specifically for readability. Hardcode for (minor) performance gain
-		ws := "`t`n`r " Chr(160) ; whitespace plus NBSP. This gets trimmed from the markup
-		obj := {} ; dummy object
-		objs := [] ; stack
-		keys := [] ; stack
-		isarrays := [] ; stack
-		literals := [] ; queue
-		y := nest := 0
+            ; Value either array/dict or primative
+            if ((isObject(v)) && (depth>1)) {
 
-	; First pass swaps out literal strings so we can parse the markup easily
-		StringGetPos, z, str, %quot% ; initial seek
-		while !ErrorLevel
-		{
-			; Look for the non-literal quote that ends this string. Encode literal backslashes as '\u005C' because the
-			; '\u..' entities are decoded last and that prevents literal backslashes from borking normal characters
-			StringGetPos, x, str, %quot%,, % z + 1
-			while !ErrorLevel
-			{
-				StringMid, key, str, z + 2, x - z - 1
-				StringReplace, key, key, \\, \u005C, A
-				If SubStr( key, 0 ) != "\"
-					Break
-				StringGetPos, x, str, %quot%,, % x + 1
-			}
-		;	StringReplace, str, str, %quot%%t%%quot%, %quot% ; this might corrupt the string
-			str := ( z ? SubStr( str, 1, z ) : "" ) quot SubStr( str, x + 2 ) ; this won't
+	            ; Determine the value's wrapping symbol
+                if (v.MaxIndex() > 0) {
+                    ; Array
+                    ToReturn .= "[" . NL
+                    ToReturn .= this.parseStructure(v, Depth-1, CurIndent)
+                    ToReturn .= NL . CurIndent . "]"
+                } else {
+                    ; Dictionary
+                    ToReturn .= "{" . NL
+                    ToReturn .= this.parseStructure(v, Depth-1, CurIndent)
+                    ToReturn .= NL . CurIndent . "}"
+                }
+            } else {
+                ; primative (string, int, etc)
+                if v is not number
+                    v := """" v """"
 
-		; Decode entities
-			StringReplace, key, key, \%quot%, %quot%, A
-			StringReplace, key, key, \b, % Chr(08), A
-			StringReplace, key, key, \t, % A_Tab, A
-			StringReplace, key, key, \n, `n, A
-			StringReplace, key, key, \f, % Chr(12), A
-			StringReplace, key, key, \r, `r, A
-			StringReplace, key, key, \/, /, A
-			while y := InStr( key, "\u", 0, y + 1 )
-				if ( A_IsUnicode || Abs( "0x" SubStr( key, y + 2, 4 ) ) < 0x100 )
-					key := ( y = 1 ? "" : SubStr( key, 1, y - 1 ) ) Chr( "0x" SubStr( key, y + 2, 4 ) ) SubStr( key, y + 6 )
+                ToReturn .= v
+            }
 
-			literals.insert(key)
+            ; Add comma after value if more items
+            if (A_Index < len)
+                ToReturn .= ","
 
-			StringGetPos, z, str, %quot%,, % z + 1 ; seek
-		}
+            ToReturn .= NL
+        }
+        return RTrim(ToReturn, NL)
+    }
+    
+    write( obj ) {
+        return this.fromObj( obj )
+    }
+    fromObj( obj ) { ;_json_fromobj
 
-	; Second pass parses the markup and builds the object iteratively, swapping placeholders as they are encountered
-		key := isarray := 1
+        If IsObject( obj )
+        {
+            isarray := 0 ; an empty object could be an array... but it ain't, says I
+            for key in obj
+                if ( key != ++isarray )
+                {
+                    isarray := 0
+                    Break
+                }
 
-		; The outer loop splits the blob into paths at markers where nest level decreases
-		Loop Parse, str, % "]}"
-		{
-			StringReplace, str, A_LoopField, [, [], A ; mark any array open-brackets
+            for key, val in obj
+                str .= ( A_Index = 1 ? "" : "," ) ( isarray ? "" : this.write( key ) ":" ) this.write( val )
 
-			; This inner loop splits the path into segments at markers that signal nest level increases
-			Loop Parse, str, % "[{"
-			{
-				; The first segment might contain members that belong to the previous object
-				; Otherwise, push the previous object and key to their stacks and start a new object
-				if ( A_Index != 1 )
-				{
-					objs.insert( obj )
-					isarrays.insert( isarray )
-					keys.insert( key )
-					obj := {}
-					isarray := key := Asc( A_LoopField ) = 93
-				}
+            return isarray ? "[" str "]" : "{" str "}"
+        }
+        else if obj IS NUMBER
+            return obj
+    ;   else if obj IN null,true,false ; AutoHotkey does not natively distinguish these
+    ;       return obj
 
-				; arrrrays are made by pirates and they have index keys
-				if ( isarray )
-				{
-					Loop Parse, A_LoopField, `,, % ws "]"
-						if ( A_LoopField != "" )
-							obj[key++] := A_LoopField = quot ? literals.remove(1) : A_LoopField
-				}
-				; otherwise, parse the segment as key/value pairs
-				else
-				{
-					Loop Parse, A_LoopField, `,
-						Loop Parse, A_LoopField, :, % ws
-							if ( A_Index = 1 )
-								key := A_LoopField = quot ? literals.remove(1) : A_LoopField
-							else if ( A_Index = 2 && A_LoopField != "" )
-								obj[key] := A_LoopField = quot ? literals.remove(1) : A_LoopField
-				}
-				nest += A_Index > 1
-			} ; Loop Parse, str, % "[{"
+        ; Encode control characters, starting with backslash.
+        StringReplace, obj, obj, \, \\, A
+        StringReplace, obj, obj, % Chr(08), \b, A
+        StringReplace, obj, obj, % A_Tab, \t, A
+        StringReplace, obj, obj, `n, \n, A
+        StringReplace, obj, obj, % Chr(12), \f, A
+        StringReplace, obj, obj, `r, \r, A
+        StringReplace, obj, obj, ", \", A
+        StringReplace, obj, obj, /, \/, A
+        While RegexMatch( obj, "[^\x20-\x7e]", key )
+        {
+            str := Asc( key )
+            val := "\u" . Chr( ( ( str >> 12 ) & 15 ) + ( ( ( str >> 12 ) & 15 ) < 10 ? 48 : 55 ) )
+                    . Chr( ( ( str >> 8 ) & 15 ) + ( ( ( str >> 8 ) & 15 ) < 10 ? 48 : 55 ) )
+                    . Chr( ( ( str >> 4 ) & 15 ) + ( ( ( str >> 4 ) & 15 ) < 10 ? 48 : 55 ) )
+                    . Chr( ( str & 15 ) + ( ( str & 15 ) < 10 ? 48 : 55 ) )
+            StringReplace, obj, obj, % key, % val, A
+        }
+        return """" obj """"
+    } ; this.write( obj )
 
-			If !--nest
-				Break
+    ; Uses a two-pass iterative approach to deserialize a json string
+    read( str ) {
+        return this.toObj( str )
+    }
+    toObj( str ) { ;_json_toobj
 
-			; Insert the newly closed object into the one on top of the stack, then pop the stack
-			pbj := obj
-			obj := objs.remove()
-			obj[key := keys.remove()] := pbj
-			If ( isarray := isarrays.remove() )
-				key++
+        quot := """" ; firmcoded specifically for readability. Hardcode for (minor) performance gain
+        ws := "`t`n`r " Chr(160) ; whitespace plus NBSP. This gets trimmed from the markup
+        obj := {} ; dummy object
+        objs := [] ; stack
+        keys := [] ; stack
+        isarrays := [] ; stack
+        literals := [] ; queue
+        y := nest := 0
 
-		} ; Loop Parse, str, % "]}"
+    ; First pass swaps out literal strings so we can parse the markup easily
+        StringGetPos, z, str, %quot% ; initial seek
+        while !ErrorLevel
+        {
+            ; Look for the non-literal quote that ends this string. Encode literal backslashes as '\u005C' because the
+            ; '\u..' entities are decoded last and that prevents literal backslashes from borking normal characters
+            StringGetPos, x, str, %quot%,, % z + 1
+            while !ErrorLevel
+            {
+                StringMid, key, str, z + 2, x - z - 1
+                StringReplace, key, key, \\, \u005C, A
+                If SubStr( key, 0 ) != "\"
+                    Break
+                StringGetPos, x, str, %quot%,, % x + 1
+            }
+        ;   StringReplace, str, str, %quot%%t%%quot%, %quot% ; this might corrupt the string
+            str := ( z ? SubStr( str, 1, z ) : "" ) quot SubStr( str, x + 2 ) ; this won't
 
-		Return obj
-	} ; _json_toobj( str )
+        ; Decode entities
+            StringReplace, key, key, \%quot%, %quot%, A
+            StringReplace, key, key, \b, % Chr(08), A
+            StringReplace, key, key, \t, % A_Tab, A
+            StringReplace, key, key, \n, `n, A
+            StringReplace, key, key, \f, % Chr(12), A
+            StringReplace, key, key, \r, `r, A
+            StringReplace, key, key, \/, /, A
+            while y := InStr( key, "\u", 0, y + 1 )
+                if ( A_IsUnicode || Abs( "0x" SubStr( key, y + 2, 4 ) ) < 0x100 )
+                    key := ( y = 1 ? "" : SubStr( key, 1, y - 1 ) ) Chr( "0x" SubStr( key, y + 2, 4 ) ) SubStr( key, y + 6 )
+
+            literals.insert(key)
+
+            StringGetPos, z, str, %quot%,, % z + 1 ; seek
+        }
+
+    ; Second pass parses the markup and builds the object iteratively, swapping placeholders as they are encountered
+        key := isarray := 1
+
+        ; The outer loop splits the blob into paths at markers where nest level decreases
+        Loop Parse, str, % "]}"
+        {
+            StringReplace, str, A_LoopField, [, [], A ; mark any array open-brackets
+
+            ; This inner loop splits the path into segments at markers that signal nest level increases
+            Loop Parse, str, % "[{"
+            {
+                ; The first segment might contain members that belong to the previous object
+                ; Otherwise, push the previous object and key to their stacks and start a new object
+                if ( A_Index != 1 )
+                {
+                    objs.insert( obj )
+                    isarrays.insert( isarray )
+                    keys.insert( key )
+                    obj := {}
+                    isarray := key := Asc( A_LoopField ) = 93
+                }
+
+                ; arrrrays are made by pirates and they have index keys
+                if ( isarray )
+                {
+                    Loop Parse, A_LoopField, `,, % ws "]"
+                        if ( A_LoopField != "" )
+                            obj[key++] := A_LoopField = quot ? literals.remove(1) : A_LoopField
+                }
+                ; otherwise, parse the segment as key/value pairs
+                else
+                {
+                    Loop Parse, A_LoopField, `,
+                        Loop Parse, A_LoopField, :, % ws
+                            if ( A_Index = 1 )
+                                key := A_LoopField = quot ? literals.remove(1) : A_LoopField
+                            else if ( A_Index = 2 && A_LoopField != "" )
+                                obj[key] := A_LoopField = quot ? literals.remove(1) : A_LoopField
+                }
+                nest += A_Index > 1
+            } ; Loop Parse, str, % "[{"
+
+            If !--nest
+                Break
+
+            ; Insert the newly closed object into the one on top of the stack, then pop the stack
+            pbj := obj
+            obj := objs.remove()
+            obj[key := keys.remove()] := pbj
+            If ( isarray := isarrays.remove() )
+                key++
+
+        } ; Loop Parse, str, % "]}"
+
+        Return obj
+    } ; _json_toobj( str )
 }
-
-/*
-_json_fromobj( obj ) {
-
-	If IsObject( obj )
-	{
-		isarray := 0 ; an empty object could be an array... but it ain't, says I
-		for key in obj
-			if ( key != ++isarray )
-			{
-				isarray := 0
-				Break
-			}
-
-		for key, val in obj
-			str .= ( A_Index = 1 ? "" : "," ) ( isarray ? "" : _json_fromobj( key ) ":" ) _json_fromobj( val )
-
-		return isarray ? "[" str "]" : "{" str "}"
-	}
-	else if obj IS NUMBER
-		return obj
-;	else if obj IN null,true,false ; AutoHotkey does not natively distinguish these
-;		return obj
-
-	; Encode control characters, starting with backslash.
-	StringReplace, obj, obj, \, \\, A
-	StringReplace, obj, obj, % Chr(08), \b, A
-	StringReplace, obj, obj, % A_Tab, \t, A
-	StringReplace, obj, obj, `n, \n, A
-	StringReplace, obj, obj, % Chr(12), \f, A
-	StringReplace, obj, obj, `r, \r, A
-	StringReplace, obj, obj, ", \", A
-	StringReplace, obj, obj, /, \/, A
-	While RegexMatch( obj, "[^\x20-\x7e]", key )
-	{
-		str := Asc( key )
-		val := "\u" . Chr( ( ( str >> 12 ) & 15 ) + ( ( ( str >> 12 ) & 15 ) < 10 ? 48 : 55 ) )
-				. Chr( ( ( str >> 8 ) & 15 ) + ( ( ( str >> 8 ) & 15 ) < 10 ? 48 : 55 ) )
-				. Chr( ( ( str >> 4 ) & 15 ) + ( ( ( str >> 4 ) & 15 ) < 10 ? 48 : 55 ) )
-				. Chr( ( str & 15 ) + ( ( str & 15 ) < 10 ? 48 : 55 ) )
-		StringReplace, obj, obj, % key, % val, A
-	}
-	return """" obj """"
-} ; _json_fromobj( obj )
-; Ryunp's custom aliases
-JSON.write := "_json_fromobj"
-json_write(obj) {
-	return _json_fromobj(obj)
-}
-
-; Copyright © 2013 VxE. All rights reserved.
-
-; Uses a two-pass iterative approach to deserialize a json string
-_json_toobj( str ) {
-
-	quot := """" ; firmcoded specifically for readability. Hardcode for (minor) performance gain
-	ws := "`t`n`r " Chr(160) ; whitespace plus NBSP. This gets trimmed from the markup
-	obj := {} ; dummy object
-	objs := [] ; stack
-	keys := [] ; stack
-	isarrays := [] ; stack
-	literals := [] ; queue
-	y := nest := 0
-
-; First pass swaps out literal strings so we can parse the markup easily
-	StringGetPos, z, str, %quot% ; initial seek
-	while !ErrorLevel
-	{
-		; Look for the non-literal quote that ends this string. Encode literal backslashes as '\u005C' because the
-		; '\u..' entities are decoded last and that prevents literal backslashes from borking normal characters
-		StringGetPos, x, str, %quot%,, % z + 1
-		while !ErrorLevel
-		{
-			StringMid, key, str, z + 2, x - z - 1
-			StringReplace, key, key, \\, \u005C, A
-			If SubStr( key, 0 ) != "\"
-				Break
-			StringGetPos, x, str, %quot%,, % x + 1
-		}
-	;	StringReplace, str, str, %quot%%t%%quot%, %quot% ; this might corrupt the string
-		str := ( z ? SubStr( str, 1, z ) : "" ) quot SubStr( str, x + 2 ) ; this won't
-
-	; Decode entities
-		StringReplace, key, key, \%quot%, %quot%, A
-		StringReplace, key, key, \b, % Chr(08), A
-		StringReplace, key, key, \t, % A_Tab, A
-		StringReplace, key, key, \n, `n, A
-		StringReplace, key, key, \f, % Chr(12), A
-		StringReplace, key, key, \r, `r, A
-		StringReplace, key, key, \/, /, A
-		while y := InStr( key, "\u", 0, y + 1 )
-			if ( A_IsUnicode || Abs( "0x" SubStr( key, y + 2, 4 ) ) < 0x100 )
-				key := ( y = 1 ? "" : SubStr( key, 1, y - 1 ) ) Chr( "0x" SubStr( key, y + 2, 4 ) ) SubStr( key, y + 6 )
-
-		literals.insert(key)
-
-		StringGetPos, z, str, %quot%,, % z + 1 ; seek
-	}
-
-; Second pass parses the markup and builds the object iteratively, swapping placeholders as they are encountered
-	key := isarray := 1
-
-	; The outer loop splits the blob into paths at markers where nest level decreases
-	Loop Parse, str, % "]}"
-	{
-		StringReplace, str, A_LoopField, [, [], A ; mark any array open-brackets
-
-		; This inner loop splits the path into segments at markers that signal nest level increases
-		Loop Parse, str, % "[{"
-		{
-			; The first segment might contain members that belong to the previous object
-			; Otherwise, push the previous object and key to their stacks and start a new object
-			if ( A_Index != 1 )
-			{
-				objs.insert( obj )
-				isarrays.insert( isarray )
-				keys.insert( key )
-				obj := {}
-				isarray := key := Asc( A_LoopField ) = 93
-			}
-
-			; arrrrays are made by pirates and they have index keys
-			if ( isarray )
-			{
-				Loop Parse, A_LoopField, `,, % ws "]"
-					if ( A_LoopField != "" )
-						obj[key++] := A_LoopField = quot ? literals.remove(1) : A_LoopField
-			}
-			; otherwise, parse the segment as key/value pairs
-			else
-			{
-				Loop Parse, A_LoopField, `,
-					Loop Parse, A_LoopField, :, % ws
-						if ( A_Index = 1 )
-							key := A_LoopField = quot ? literals.remove(1) : A_LoopField
-						else if ( A_Index = 2 && A_LoopField != "" )
-							obj[key] := A_LoopField = quot ? literals.remove(1) : A_LoopField
-			}
-			nest += A_Index > 1
-		} ; Loop Parse, str, % "[{"
-
-		If !--nest
-			Break
-
-		; Insert the newly closed object into the one on top of the stack, then pop the stack
-		pbj := obj
-		obj := objs.remove()
-		obj[key := keys.remove()] := pbj
-		If ( isarray := isarrays.remove() )
-			key++
-
-	} ; Loop Parse, str, % "]}"
-
-	Return obj
-} ; _json_toobj( str )
-; Ryunp's custom aliases
-JSON.read := "_json_toobj"
-json_read(str) {
-	return _json_toobj(str)
-}
-*/

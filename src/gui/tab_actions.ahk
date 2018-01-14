@@ -1,27 +1,56 @@
-for idx, action in action_list {
+; Instruction text
+Gui, Add, Text, Section, Checkbox toggles on/off`, Right-Click to change keybind
 
-	Gui, add, text, % "Section w100 xm+" tabPadding " y+" tabPadding, % action.label
-	Gui, add, button, hwnd_hwnd ys-5 w75, % config.actions[action.fn].hotkey
-	
-	; Attach callback bound to current control context
-	fn := func("change_action_hk_handler").bind(_hwnd, action)
-	GuiControl +g, % _hwnd, % fn
+; List of available actions
+Gui, Add, ListView, hwnd_lv_keybinds g_cb_lv_keybinds r5 xs w350 Checked NoSortHdr AltSubmit, |Key|Name|Description
+
+; Redraw listview
+items := []
+for i,ui in action_list {
+    cfg := config.actions[ui.id]
+    items.push([(cfg.enabled ? "check" : ""), "", cfg.hotkey, ui.label, ui.desc])
 }
+LV_Update(_win_main, _lv_keybinds, items)
 
-change_action_hk_handler(ctrlHwnd, action) {
-	global
+; Adjust widths
+LV_ModifyCol() ; Auto-size each column to fit its contents.
+LV_ModifyCol(2, 30) ; Adjust HK column
 
-	; Attempt user input
-	newHK := HotkeyGUI()
 
-	if (newHK) {
-		
-		; Update model/OS
-		unregister_hk(config.actions[action.fn].hotkey)
-		config.actions[action.fn].hotkey := newHK
-		register_hk(newHK, action.fn)
+_cb_lv_keybinds() {
+    global
 
-		; Update view
-		GuiControl, , % ctrlHwnd, % newHK
-	}
+    action := action_list[A_EventInfo]
+    cfg := config.actions[action.id]
+
+    ; Change hotkey on item right click
+    if (A_GuiEvent = "RightClick") {
+        ; Prompt for new hotkey
+        new_hk := HotkeyGUI(_win_main,,,, action.label ": Select Hotkey")
+        if (new_hk) {
+
+            ; Turn off old hk
+            unregister_hk(cfg.hotkey)
+
+            ; Update config data
+            cfg.hotkey := new_hk
+
+            ; Register new hk
+            register_hk(new_hk, action.id)
+
+            ; Redraw listview
+            items := []
+            for i,action in action_list {
+                cfg := config.actions[action.id]
+                items.push([(cfg.enabled ? "check" : ""), "", cfg.hotkey, action.label, action.desc])
+            }
+            LV_Update(_win_main, _lv_keybinds, items)
+        }
+    } else if (InStr(ErrorLevel, "C", true)) {
+        cfg.enabled := 1
+        register_hk(cfg.hotkey, action.id)
+    } else if (InStr(ErrorLevel, "c", true)) {
+        cfg.enabled := 0
+        unregister_hk(cfg.hotkey)
+    }
 }

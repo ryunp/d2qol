@@ -1,71 +1,120 @@
-; Cube Location
-point := config.coords.cube.x ", " config.coords.cube.y
-Gui, add, text, % "Section w100 xm+" tabPadding " y+" tabPadding, Cube (px)
-Gui, add, button, hwnd_hwnd ys-5 w75 gcube_coords_handler, % point
-hwnd_cubecoords := _hwnd
+; UI Group for auto-clicker settings
+Gui, Add, GroupBox, Section h100 w140, Clicker
+	cfg := config.actions.Repeat_Clicks
 
-; Transmute Location
-point := config.coords.transmute.x ", " config.coords.transmute.y
-Gui, add, text, % "Section w100 xm+" tabPadding " y+" tabPadding, Transmute (px)
-Gui, add, button, hwnd_hwnd ys-5 w75 gtransmute_coords_handler, % point
-hwnd_transmutecoords := _hwnd
+	; Click qauntity
+	gui, add, edit, Section hwnd_ui_clicker_quantity xs+10 ys+20 w50 h20 g_cb_clicker_quantity, % cfg.quantity
+	gui, add, text, ys+3, Quantity
 
-; In-game Inventory Keybind
-Gui, add, text, % "Section w100 xm+" tabPadding " y+" tabPadding, Inventory Pane
-Gui, add, button, hwnd_hwnd ys-5 w75 ggame_inv_handler, % config.game.keybinds.inventory
-hwnd_gameinv := _hwnd
+	; Delays between clicks
+	gui, add, edit, Section hwnd_ui_clicker_delay xs w50 h20 g_cb_clicker_delay, % cfg.delay
+	gui, add, text, ys+3, Delay (ms)
 
+	; Disable mouse when running
+	gui, add, Checkbox, % "hwnd_ui_clicker_disablemouse AltSubmit xs h20 g_cb_clicker_disablemouse" , Disable Mouse
+	GuiControl, , % _ui_clicker_disablemouse, % cfg.disablemouse
+
+; UI Group for in-game operational settings
+Gui, Add, GroupBox, Section h100 w200 xm+160 ym+28, In-Game
+
+	; Cube Location
+	cfg := config.coords.cube
+	point := cfg.x ", " cfg.y
+	Gui, add, button, Section hwnd_ui_cube_location xs+10 ys+20 w70 h20 g_cb_cube_coords, % point
+	Gui, add, text, ys+3, Cube Location (px)
+
+	; Transmute Location
+	cfg := config.coords.transmute
+	point := cfg.x ", " cfg.y
+	Gui, add, button, Section hwnd_ui_cube_transmute xs w70 h20 g_cb_transmute_coords, % point
+	Gui, add, text, ys+3, Transmute (px)
+
+	; In-game Inventory Keybind
+	cfg := config.game.keybinds
+	Gui, add, button, Section hwnd_ui_gameinventory_keybind xs w70 h20 g_cb_game_inv, % cfg.inventory
+	Gui, add, text, ys+3, Toggle Inventory
+
+
+
+; Trigger key when assigning location
+confirm_key := "Shift"
 
 ; Event handlers
-transmute_coords_handler() {
+
+_cb_clicker_quantity() {
 	global
 
-	key := "Shift"
-	msg := "Place mouse over the Transmute button and press " key
-
-	; Prompt for user input
-	point := get_mouse_coords_from_user(key, msg)
-
-	if (point) {
-
-		config.coords.transmute := point
-
-		; Update view
-		GuiControl, , % hwnd_transmutecoords, % point.x ", " point.y	
-	}
+	cfg := config.actions.Repeat_Clicks
+	ControlGetText, quantity, , % "ahk_id " _ui_clicker_quantity
+	cfg.quantity := quantity
 }
 
 
-cube_coords_handler() {
+_cb_clicker_delay() {
 	global
 
-	key := "Shift"
-	msg := "Place mouse over Horadric Cube and press " key
+	cfg := config.actions.Repeat_Clicks
+	ControlGetText, delay, , % "ahk_id " _ui_clicker_delay
+	cfg.delay := delay
+}
+
+
+_cb_clicker_disablemouse() {
+	global
+
+	cfg := config.actions.Repeat_Clicks
+	GuiControlGet, state,, % _ui_clicker_disablemouse
+    cfg.disablemouse := state
+}
+
+
+_cb_cube_coords() {
+	global
+
+	msg := Format("Place mouse over {} and press {}", "Horadric Cube", confirm_key)
 
 	; Prompt for user input
-	point := get_mouse_coords_from_user(key, msg)
+	point := get_mouse_coords_from_user(confirm_key, msg)
 
 	if (point) {
-
+		; Update config data
 		config.coords.cube := point
 
 		; Update view
-		GuiControl, , % hwnd_cubecoords, % point.x ", " point.y	
+		GuiControl, , % _ui_cube_location, % point.x ", " point.y	
 	}
 }
 
 
-game_inv_handler() {
+_cb_transmute_coords() {
+	global
+
+	msg := Format("Place mouse over {} and press {}", "Transmute Button", confirm_key)
+	
+	; Prompt for user input
+	point := get_mouse_coords_from_user(confirm_key, msg)
+
+	if (point) {
+		; Update config data
+		config.coords.transmute := point
+
+		; Update view
+		GuiControl, , % _ui_cube_transmute, % point.x ", " point.y	
+	}
+}
+
+
+_cb_game_inv() {
 	global
 
 	; Prompt for user input
 	newHK := HotkeyGUI()
 
 	if (newHK) {
-		
+		; Update config data
 		config.game.keybinds.inventory := newHK
 
 		; Update view
-		GuiControl, , % hwnd_gameinv, % newHK
+		GuiControl, , % _ui_gameinventory_keybind, % newHK
 	}
 }
