@@ -6,7 +6,7 @@ Class Action_Loop {
 
     __New(quantity:=100, delay:=200, fn:="") {
         this.quantity := quantity
-        this.current_tick := quantity
+        this.current_tick := 0
         this.delay := delay
         this._action_fn := fn
         this.active := 0
@@ -61,8 +61,9 @@ Class Action_Loop {
             return
         }
 
-        if (this.current_tick-- > 0) {
+        if (this.current_tick < this.quantity) {
             ; Execute callback with current parameters
+            this.current_tick += 1
             this._action_fn.Call(this.current_tick, this.quantity, this.delay)
         } else {
             this.stop()

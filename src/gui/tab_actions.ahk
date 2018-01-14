@@ -1,5 +1,5 @@
 ; Instruction text
-Gui, Add, Text, Section, Checkbox toggles on/off`, Right-Click to change keybind
+Gui, Add, Text, Section, Checkbox toggles keybind on/off`, Right-Click to change keybind
 
 ; List of available actions
 Gui, Add, ListView, hwnd_lv_keybinds g_cb_lv_keybinds r5 xs w350 Checked NoSortHdr AltSubmit, |Key|Name|Description
