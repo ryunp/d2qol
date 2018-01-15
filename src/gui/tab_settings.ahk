@@ -79,7 +79,7 @@ _cb_cube_coords() {
 	msg := Format("Place mouse over {} and press {}", "Horadric Cube", confirm_key)
 
 	; Prompt for user input
-	point := get_mouse_coords_from_user(confirm_key, msg)
+	point := prompt_mouse_coords(confirm_key, msg, d2_window)
 
 	if (point) {
 		; Update config data
@@ -97,7 +97,7 @@ _cb_transmute_coords() {
 	msg := Format("Place mouse over {} and press {}", "Transmute Button", confirm_key)
 	
 	; Prompt for user input
-	point := get_mouse_coords_from_user(confirm_key, msg)
+	point := prompt_mouse_coords(confirm_key, msg, d2_window)
 
 	if (point) {
 		; Update config data

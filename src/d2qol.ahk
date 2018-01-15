@@ -7,11 +7,13 @@ if not A_IsAdmin {
 	ExitApp
 }
 
+global d2_window := "Diablo II ahk_class Diablo II"
+
 ; Process settings
 #NoEnv
 SetDefaultMouseSpeed, 0
 SendMode Input
-Hotkey, IfWinActive, Diablo II ahk_class Diablo II
+Hotkey, IfWinActive, % d2_window
 
 ; Dependencies
 #Include, lib\HotkeyGui.ahk

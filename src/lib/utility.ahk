@@ -7,11 +7,10 @@ register_hk(hk, fn) {
     Hotkey, % "~" hk, % fn, On
 }
 
-get_mouse_coords_from_user(trigger, msg) {
-    winTitle := winClass := "Diablo II"
-    result := 0
+prompt_mouse_coords(trigger, msg, win_title:="") {
+    result := false
 
-    if (hwnd := WinExist(winTitle " ahk_class " winClass)) {
+    if (hwnd := WinExist(win_title)) {
         
         msgbox, 1, Get Coords, % msg
         IfMsgBox OK
@@ -25,7 +24,7 @@ get_mouse_coords_from_user(trigger, msg) {
         }
     } else {
 
-        msgbox % "No " winTitle " window!"
+        msgbox % "Target window does not exist!"
     }
 
     return result
