@@ -1,10 +1,19 @@
 unregister_hk(hk) {
-    Hotkey, % "~" hk, Off
+    Hotkey, % "*~" hk, Off
 }
 
 
 register_hk(hk, fn) {
-    Hotkey, % "~" hk, % fn, On
+    Hotkey, % "*~" hk, % fn, On
+}
+
+block_mouse_input(state) {
+    if (state) {
+        BlockInput, MouseMove
+    } else {
+        BlockInput, Off
+        BlockInput, MouseMoveOff
+    }
 }
 
 prompt_mouse_coords(trigger, msg, win_title:="") {

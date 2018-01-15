@@ -6,8 +6,7 @@ Repeat_Clicks() {
     cfg := config.actions.Repeat_Clicks
     if (looper && looper.active) {
         if (cfg.disablemouse) {
-            BlockInput, Off
-            BlockInput, MouseMoveOff
+            block_mouse_input(false)
         }
         looper.stop()
     } else {
@@ -15,7 +14,7 @@ Repeat_Clicks() {
         looper.setRequiredWindow("Diablo II ahk_class Diablo II")
         looper.start()
          if (cfg.disablemouse) {
-            BlockInput, MouseMove
+            block_mouse_input(true)
         }
     }
 }
@@ -23,13 +22,12 @@ Repeat_Clicks() {
 rc_tick_callback(current, quantity, delay) {
     global
 
-    if (current < 2) {
+    if (current = quntity) {
          if (cfg.disablemouse) {
-            BlockInput, Off
-            BlockInput, MouseMoveOff
+            block_mouse_input(false)
         }
     }
 
-    Click
+    SendInput, {LButton}
     TrayTip, Clicker, % current "/" quantity " [" delay "ms]"
 }

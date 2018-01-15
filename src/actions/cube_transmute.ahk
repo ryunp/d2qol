@@ -3,13 +3,14 @@ Cube_Transmute() {
 	point := config.coords.transmute
 
 	; Ignore user, save mouse
-	BlockInput, On
+    block_mouse_input(true)
 	MouseGetPos, x, y
 
 	; Click at location
 	MouseMove % point.x, % point.y
-	Click
+	SendInput, {LButton}
 
+    ; Revert position
 	MouseMove, % x, % y
-	BlockInput, Off
+    block_mouse_input(false)
 }

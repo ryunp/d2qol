@@ -3,18 +3,19 @@ Drop_Item() {
 	WinGetPos,,, wW, wH, A
 	
 	if not (config.game.manualpickup) {
-		Click
+		SendInput, {LButton}
 		sleep 126 ; wait three frames
 	}
 
 	; Ignore user, save mouse
-	BlockInput, On
+	block_mouse_input(true)
 	MouseGetPos, mX, mY
 
 	; Drop in left half
 	MouseMove % wW * 0.25, wH * 0.5
-	Click
+	SendInput, {LButton}
 
+    ; Revert position
 	MouseMove, % mX, % mY
-	BlockInput, Off
+	block_mouse_input(false)
 }

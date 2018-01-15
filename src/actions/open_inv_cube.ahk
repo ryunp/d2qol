@@ -6,7 +6,7 @@ Open_Inv_Cube() {
 	Send, {Space}
 
 	; Ignore user, save mouse
-	BlockInput, On
+	block_mouse_input(true)
 	MouseGetPos, x, y
 
 	; Open inventory pane
@@ -16,9 +16,10 @@ Open_Inv_Cube() {
 	MouseMove % point.x, % point.y
 
 	; Open cube
-	Click Right
+	SendInput, {RButton}
 	sleep % 42 ; wait 1 in game frame
 	
+    ; Revert position
 	MouseMove, % x, % y
-	BlockInput, Off
+	block_mouse_input(false)
 }

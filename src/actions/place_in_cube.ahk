@@ -4,12 +4,12 @@ Place_In_Cube() {
 	point := config.coords.cube
 
 	if not (config.game.manualpickup) {
-		Click
-		sleep 126 ; wait three frames
+		SendInput, {LButton}
+		sleep 126 ; wait three frames (two works, but more in case of latency)
 	}
 
 	; Ignore user, save mouse
-	BlockInput, On
+	block_mouse_input(true)
 	MouseGetPos, x, y
 	
 	; Hitbox workaround
@@ -20,8 +20,9 @@ Place_In_Cube() {
 	sleep, 84 ; wait two frames
 	
 	; Click at location
-	Click
+	SendInput, {LButton}
 
+    ; Revert position
 	MouseMove, % x, % y
-	BlockInput, Off
+	block_mouse_input(false)
 }
