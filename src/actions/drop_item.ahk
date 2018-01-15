@@ -2,6 +2,11 @@ Drop_Item() {
 	
 	WinGetPos,,, wW, wH, A
 	
+	if not (config.game.manualpickup) {
+		Click
+		sleep 126 ; wait three frames
+	}
+
 	; Ignore user, save mouse
 	BlockInput, On
 	MouseGetPos, mX, mY

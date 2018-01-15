@@ -23,7 +23,7 @@ Hotkey, IfWinActive, Diablo II ahk_class Diablo II
 
 ; Define action models
 global action_list := []
-action_list.push({"id": "Open_Inv_Cube", "label": "Open Inv `& Cube", "desc": "Opens inventory and cube"})
+action_list.push({"id": "Open_Cube", "label": "Open Cube", "desc": "Opens cube"})
 action_list.push({"id": "Cube_Transmute", "label": "Cube Transmute", "desc": "Activate Cube Transmute"})
 action_list.push({"id": "Place_In_Cube", "label": "Place In Cube", "desc": "Places item into cube"})
 action_list.push({"id": "Drop_Item", "label": "Drop Item", "desc": "Drops item onto ground"})
@@ -33,7 +33,7 @@ action_list.push({"id": "Repeat_Clicks", "label": "Clicker", "desc": "Continuous
 ; Set default config
 global config_file := "d2qol.json"
 global config := {"coords":{"cube":{"x":0,"y":0},"transmute":{"x":0,"y":0}}
-	,"actions":{"Open_Inv_Cube":{"enabled":1,"hotkey":"F1"},"Cube_Transmute":{"enabled":1,"hotkey":"F2"},"Place_In_Cube":{"enabled":1,"hotkey":"F3"},"Drop_Item":{"enabled":1,"hotkey":"F4"},"Repeat_Clicks":{"enabled":1,"hotkey":"F5","quantity":60,"delay":250,"disablemouse":1}}
+	,"actions":{"Open_Cube":{"enabled":1,"hotkey":"F1"},"Cube_Transmute":{"enabled":1,"hotkey":"F2"},"Place_In_Cube":{"enabled":1,"hotkey":"F3"},"Drop_Item":{"enabled":1,"hotkey":"F4"},"Repeat_Clicks":{"enabled":1,"hotkey":"F5","quantity":60,"delay":250,"disablemouse":1}}
 	,"game":{"keybinds":{"inventory":"i"},"manualpickup":0}}
 
 
@@ -61,7 +61,7 @@ return ; END AUTOEXEC
 
 ; Action definitions
 #include, actions\
-#Include, open_inv_cube.ahk
+#Include, open_cube.ahk
 #Include, cube_transmute.ahk
 #Include, place_in_cube.ahk
 #Include, drop_item.ahk
