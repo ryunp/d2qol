@@ -1,4 +1,5 @@
 Cube_Transmute() {
+    global
 
 	point := config.coords.transmute
 

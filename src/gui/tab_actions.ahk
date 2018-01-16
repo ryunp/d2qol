@@ -2,7 +2,7 @@
 Gui, Add, Text, Section, Checkbox toggles keybind on/off`, Right-Click to change keybind
 
 ; List of available actions
-Gui, Add, ListView, hwnd_lv_keybinds g_cb_lv_keybinds r5 xs w350 Checked NoSortHdr AltSubmit, |Key|Name|Description
+Gui, Add, ListView, hwnd_lv_keybinds g_cb_lv_keybinds r6 xs w350 Checked NoSortHdr AltSubmit, |Key|Name|Description
 
 ; Redraw listview
 items := []
@@ -15,6 +15,7 @@ LV_Update(_win_main, _lv_keybinds, items)
 ; Adjust widths
 LV_ModifyCol() ; Auto-size each column to fit its contents.
 LV_ModifyCol(2, 30) ; Adjust HK column
+LV_ModifyCol(4, "AutoHdr") ; Adjust HK column
 
 
 _cb_lv_keybinds() {

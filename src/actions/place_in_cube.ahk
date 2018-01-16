@@ -2,10 +2,11 @@ Place_In_Cube() {
 	global
 
 	point := config.coords.cube
+	delay := config.game.interactiondelay
 
 	if not (config.game.manualpickup) {
 		SendInput, {LButton}
-		sleep 126 ; wait three frames (two works, but more in case of latency)
+		sleep % delay
 	}
 
 	; Ignore user, save mouse
@@ -17,7 +18,7 @@ Place_In_Cube() {
 	MouseMove % point.x, % point.y - 50   ;  p1
 	MouseMove % point.x, % point.y, 2     ;  p2
 	SendMode Input                        ; set back to teleporting
-	sleep, 84 ; wait two frames
+	sleep, % delay
 	
 	; Click at location
 	SendInput, {LButton}

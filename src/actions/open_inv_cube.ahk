@@ -1,9 +1,7 @@
 Open_Inv_Cube() {
-
+	global
+	
 	point := config.coords.cube
-
-	; In case inv is already open
-	Send, {Space}
 
 	; Ignore user, save mouse
 	block_mouse_input(true)
@@ -11,13 +9,13 @@ Open_Inv_Cube() {
 
 	; Open inventory pane
 	Send, % config.game.keybinds.inventory
+	sleep % 42*1 ; wait 1 frame
 
-	; move to cube location
+	; Move to cube location
 	MouseMove % point.x, % point.y
 
 	; Open cube
 	SendInput, {RButton}
-	sleep % 42 ; wait 1 in game frame
 	
     ; Revert position
 	MouseMove, % x, % y

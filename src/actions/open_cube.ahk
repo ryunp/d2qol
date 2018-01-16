@@ -1,16 +1,18 @@
 Open_Cube() {
+    global
+
     point := config.coords.cube
 
     ; Ignore user, save mouse
     block_mouse_input(true)
     MouseGetPos, x, y
 
-    ; move to cube location
+    ; Move to cube location
     MouseMove % point.x, % point.y
+    sleep % 42*1 ; wait 1 frame
 
     ; Open cube
     SendInput, {RButton}
-    sleep % 42 ; wait 1 frame
     
     ; Revert position
     MouseMove, % x, % y

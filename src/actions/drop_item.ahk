@@ -1,10 +1,11 @@
 Drop_Item() {
-	
+	global
+
 	WinGetPos,,, wW, wH, A
 	
 	if not (config.game.manualpickup) {
 		SendInput, {LButton}
-		sleep 126 ; wait three frames
+		sleep % 42*3 ; wait three frames
 	}
 
 	; Ignore user, save mouse

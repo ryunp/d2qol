@@ -22,12 +22,12 @@ Repeat_Clicks() {
 rc_tick_callback(current, quantity, delay) {
     global
 
-    if (current = quntity) {
+    SendInput, {LButton}
+    TrayTip, Clicker, % current "/" quantity " [" delay "ms]"
+    
+    if (current = quantity) {
          if (cfg.disablemouse) {
             block_mouse_input(false)
         }
     }
-
-    SendInput, {LButton}
-    TrayTip, Clicker, % current "/" quantity " [" delay "ms]"
 }

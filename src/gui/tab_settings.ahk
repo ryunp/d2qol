@@ -1,115 +1,125 @@
 ; UI Group for auto-clicker settings
-Gui, Add, GroupBox, Section h100 w140, Clicker
+Gui, Add, GroupBox, Section h110 w140, Clicker
 	cfg := config.actions.Repeat_Clicks
 
 	; Click qauntity
-	gui, add, edit, Section hwnd_ui_clicker_quantity xs+10 ys+20 w50 h20 g_cb_clicker_quantity, % cfg.quantity
-	gui, add, text, ys+3, Quantity
+	gui, add, edit, Section v_ui_edit_clickerquantity xs+10 ys+20 w50 h20 g_cb_edit_clickerquantity, % cfg.quantity
+	gui, add, text, v_ui_text_clickerquantity ys+3, Quantity
 
 	; Delays between clicks
-	gui, add, edit, Section hwnd_ui_clicker_delay xs w50 h20 g_cb_clicker_delay, % cfg.delay
-	gui, add, text, ys+3, Delay (ms)
+	gui, add, edit, Section xs w50 h20 g_cb_edit_clickerdelay, % cfg.delay
+	gui, add, text, hwnd_ui_text_clickerdelay ys+3, Delay (ms)
 
 	; Disable mouse when running
-	gui, add, Checkbox, % "hwnd_ui_clicker_disablemouse AltSubmit xs h20 g_cb_clicker_disablemouse", Disable Mouse
-	GuiControl, , % _ui_clicker_disablemouse, % cfg.disablemouse
+	gui, add, Checkbox, % "v_ui_check_clickerdisablemouse AltSubmit xs h20 g_cb_check_clickerdisablemouse", Disable Mouse
+	GuiControl, , _ui_check_clickerdisablemouse, % cfg.disablemouse
 
 ; UI Group for in-game operational settings
-Gui, Add, GroupBox, Section h130 w200 xm+160 ym+28, In-Game
+Gui, Add, GroupBox, Section h110 w200 xm+160 ym+28, In-Game
 
 	; Cube Location
 	cfg := config.coords.cube
 	point := cfg.x ", " cfg.y
-	Gui, add, button, Section hwnd_ui_cube_location xs+10 ys+20 w70 h20 g_cb_cube_coords, % point
-	Gui, add, text, ys+3, Cube Location (px)
+	Gui, add, button, Section xs+10 ys+20 w70 h20 g_cb_button_cubecoords, % point
+	Gui, add, text, v_ui_text_cubecoords ys+3, Cube Location (px)
 
 	; Transmute Location
 	cfg := config.coords.transmute
 	point := cfg.x ", " cfg.y
-	Gui, add, button, Section hwnd_ui_cube_transmute xs w70 h20 g_cb_transmute_coords, % point
-	Gui, add, text, ys+3, Transmute (px)
+	Gui, add, button, Section xs w70 h20 g_cb_button_transmutecoords, % point
+	Gui, add, text, v_ui_text_transmutecoords ys+3, Transmute (px)
 
 	; In-game Inventory Keybind
 	cfg := config.game.keybinds
-	Gui, add, button, Section hwnd_ui_gameinventory_keybind xs w70 h20 g_cb_game_inv, % cfg.inventory
-	Gui, add, text, ys+3, Toggle Inventory
+	Gui, add, button, Section xs w70 h20 g_cb_button_gameinventory, % cfg.inventory
+	Gui, add, text, vui_text_gameinventory ys+3, Open Inventory Panel
+
+; UI Group for timing of actions
+Gui, Add, GroupBox, Section h50 w348 xm+12 ym+141, Actions
 
 	; Manual item pickup
 	cfg := config.game
-	Gui, add, Checkbox, % "Section hwnd_ui_manualpickup AltSubmit xs h20 g_cb_manualpickup", Manual Item Pickup
-	GuiControl, , % _ui_manualpickup, % cfg.manualpickup
+	Gui, add, Checkbox, Section v_ui_check_manualpickup AltSubmit xs+10 ys+20 h20 g_cb_check_manualpickup, Manual Item Pickup
+	GuiControl, , % _ui_check_manualpickup, % cfg.manualpickup
+
+	; Latency between game client interaction
+	cfg := config.game
+	Gui, add, Edit, Section ys xm+171 w50 h20 g_cb_edit_interactiondelay, % cfg.interactiondelay
+	Gui, add, Text, v_ui_text_interactiondelay ys+3, Interaction Delay (ms)
 
 
 
-; Trigger key when assigning location
-confirm_key := "Shift"
-
+;------------------
 ; Event handlers
+;------------------
 
-_cb_clicker_quantity() {
+; Clicker group
+_cb_edit_clickerquantity(CtrlHwnd) {
 	global
 
 	cfg := config.actions.Repeat_Clicks
-	ControlGetText, quantity, , % "ahk_id " _ui_clicker_quantity
+	ControlGetText, quantity, , % "ahk_id " CtrlHwnd
 	cfg.quantity := quantity
 }
 
 
-_cb_clicker_delay() {
+_cb_edit_clickerdelay(CtrlHwnd) {
 	global
 
 	cfg := config.actions.Repeat_Clicks
-	ControlGetText, delay, , % "ahk_id " _ui_clicker_delay
+	ControlGetText, delay, , % "ahk_id " CtrlHwnd
 	cfg.delay := delay
 }
 
 
-_cb_clicker_disablemouse() {
+_cb_check_clickerdisablemouse(CtrlHwnd) {
 	global
 
 	cfg := config.actions.Repeat_Clicks
-	GuiControlGet, state,, % _ui_clicker_disablemouse
+	GuiControlGet, state,, % CtrlHwnd
     cfg.disablemouse := state
 }
 
 
-_cb_cube_coords() {
+
+; In-Game group
+_cb_button_cubecoords(CtrlHwnd) {
 	global
 
-	msg := Format("Place mouse over {} and press {}", "Horadric Cube", confirm_key)
+	msg := Format("Place mouse over {} and press {}", "Horadric Cube", config.confirm_key)
 
 	; Prompt for user input
-	point := prompt_mouse_coords(confirm_key, msg, d2_window)
+	point := prompt_mouse_coords(config.confirm_key, msg, d2_window)
 
 	if (point) {
 		; Update config data
 		config.coords.cube := point
 
 		; Update view
-		GuiControl, , % _ui_cube_location, % point.x ", " point.y	
+		GuiControl, , % CtrlHwnd, % point.x ", " point.y	
 	}
 }
 
 
-_cb_transmute_coords() {
+_cb_button_transmutecoords(CtrlHwnd) {
 	global
 
-	msg := Format("Place mouse over {} and press {}", "Transmute Button", confirm_key)
+	msg := Format("Place mouse over {} and press {}", "Transmute Button", config.confirm_key)
 	
 	; Prompt for user input
-	point := prompt_mouse_coords(confirm_key, msg, d2_window)
+	point := prompt_mouse_coords(config.confirm_key, msg, d2_window)
 
 	if (point) {
 		; Update config data
 		config.coords.transmute := point
 
 		; Update view
-		GuiControl, , % _ui_cube_transmute, % point.x ", " point.y	
+		GuiControl, , % CtrlHwnd, % point.x ", " point.y	
 	}
 }
 
 
-_cb_game_inv() {
+_cb_button_gameinventory(CtrlHwnd) {
 	global
 
 	; Prompt for user input
@@ -120,15 +130,29 @@ _cb_game_inv() {
 		config.game.keybinds.inventory := newHK
 
 		; Update view
-		GuiControl, , % _ui_gameinventory_keybind, % newHK
+		GuiControl, , % CtrlHwnd, % newHK
 	}
 }
 
 
-_cb_manualpickup() {
+
+;------------------
+; Action Timing group
+;------------------
+
+_cb_check_manualpickup(CtrlHwnd) {
 	global
 
 	cfg := config.game
-	GuiControlGet, state,, % _ui_manualpickup
+	GuiControlGet, state,, % CtrlHwnd
     cfg.manualpickup := state
+}
+
+
+_cb_edit_interactiondelay(CtrlHwnd) {
+	global
+
+	cfg := config.game
+	GuiControlGet, value,, % CtrlHwnd
+    cfg.interactiondelay := value
 }
