@@ -3,38 +3,46 @@ Median XL's end-game requires highly repetitive crafting mechanics. Working with
 
 This utility does nothing more than clicks on command in locations you have specified. There is no memory peeking, no gameplay logic, nothing outside the capabilities a human can perform.
 
-![Reducing shrines into vessel](media/d2qol_shrines.gif)
+### Features
+* GUI for configuration (no scripting required)
+* Preferences are saved on exit to a config file (d2qol.json)
+* Toggle action hotkeys on/off
+* Actions only operate within Diablo II window
+* Configure action behavior to cover various situations
+* Adjustable actions timing to compensate for latency issues
+
+### Gui
+!["Keybinds UI screenshot"](media/d2qol_keybinds.png)
+
+!["Settings UI screenshot"](media/d2qol_settings.png)
+
+!["Settings UI screenshot"](media/d2qol_settingstooltip.png)
 
 ### Install
 Download [d2qol.exe](build/d2qol.exe).
 
 ### Usage
-Run d2qol.exe **as administrator**. The program will immediately exit if this condition is not true.  
-Make sure to set Cube location and Transmute location for your own setup, as various actions rely on these coordinates.  
-Hotkeys only active when the Diablo II window is focused.  
-Hotkeys are enabled/disabled via checkbox.  
-On exiting the program, settings are saved to *d2qol.json* in the running directory.
-
-### Gui
-The GUI offers configuration for the various actions and settings. Clicking the buttons will prompt with further configuration input.
-
-!["Keybinds UI screenshot"](media/d2qol_keybinds.png)
-
-!["Settings UI screenshot"](media/d2qol_settings.png)
+1. Run executable as Administrator (needs to send commands to the Diablo II window)
+2. Configure hotkeys and settings
 
 Setting | Description
 --- | ---
-Quantity | number of clicks to perform
-Delay | time in milliseconds between clicks
-Disable Mouse | disables mouse movement during the clicking process. Prevents drifting into MOs
-Cube Location | x,y coords of cube within inventory
-Transmute | x,y coords of transmute activation button
-Toggle Inventory | refers to the hotkey used in-game to open the Inventory panel
-Manual Item Pickup | disables Place In Cube from initially clicking
+Quantity | Amount of times for clicker to click the mouse
+Delay | The time period, in milliseconds, between clicks.
+Disable Mouse | Block any mouse movement during the clicking sequence.
+Notify Progress | System tray tooltip showing sequence progress.
+Cube Location | X & Y coordinates of the Horadric Cube.
+Transmute Button | X & Y coordinates of the Horadric Cube's Transmute button.
+Open Inventory Panel | In-game hotkey for opening the character inventory panel.
+Disable Auto-Pickup | Disable auto pick-up during actions that involve moving items, requiring the item to be picked up before usage.
+Interaction Delay | Time period, in milliseconds, to delay during interaction with the game client.
+
+Quickly reducing shrines into vessels
+![Reducing shrines into vessel](media/d2qol_shrines.gif)
 
 ### Known Issues
 **Settings not saving properly**  
-First quit the program, then delete the config file *d2qol.json*.
+First quit the program, then delete the config file *d2qol.json*. Unfortunately settings will have to be reconfigured.
 
 This was designed and tested under 800x600 resolution and DDraw. I've had reports of fullscreen having some issues with certain actions. Everything is based on user defined x,y locations, and the sequence of UI commands is nearly identical to human execution. *What can go wrong?™*
 

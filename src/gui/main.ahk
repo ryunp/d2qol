@@ -2,7 +2,7 @@ Gui, New, hwnd_win_main +labelWinMain, d2qol
 
 ; Help Link
 Gui, Add, Link, xm+210 ym, <a href="https://forum.median-xl.com/viewtopic.php?f=4&t=3302">Median XL Forum Thread</a>
-Gui, Add, Text, xm+340 ym, v1.3.4
+Gui, Add, Text, xm+340 ym, v1.3.5
 
 ; Tabs
 Gui, add, Tab3, xm ym w380, Keybinds|Settings
