@@ -3,12 +3,12 @@ Drop_Item() {
 
 	WinGetPos,,, wW, wH, A
 	
+    ; Disable Auto-Pickup setting
 	if not (config.game.manualpickup) {
 		SendInput, {LButton}
-		sleep % 42*3 ; wait three frames
+		sleep % config.game.interactiondelay
 	}
 
-	; Ignore user, save mouse
 	block_mouse_input(true)
 	MouseGetPos, mX, mY
 
@@ -16,7 +16,6 @@ Drop_Item() {
 	MouseMove % wW * 0.25, wH * 0.5
 	SendInput, {LButton}
 
-    ; Revert position
 	MouseMove, % mX, % mY
 	block_mouse_input(false)
 }

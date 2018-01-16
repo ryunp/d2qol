@@ -1,4 +1,5 @@
 ;-----------------------------
+; Author: jballi (https://autohotkey.com/board/topic/15577-function-hotkeygui-v04/)
 ;
 ; Function: HotkeyGUI
 ;

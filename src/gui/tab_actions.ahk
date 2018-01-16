@@ -18,6 +18,10 @@ LV_ModifyCol(2, 30) ; Adjust HK column
 LV_ModifyCol(4, "AutoHdr") ; Adjust HK column
 
 
+;------------------
+; Event handlers
+;------------------
+
 _cb_lv_keybinds() {
     global
 

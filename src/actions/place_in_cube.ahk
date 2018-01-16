@@ -1,29 +1,25 @@
 Place_In_Cube() {
 	global
 
-	point := config.coords.cube
-	delay := config.game.interactiondelay
-
 	if not (config.game.manualpickup) {
 		SendInput, {LButton}
-		sleep % delay
+		sleep % config.game.interactiondelay
 	}
 
-	; Ignore user, save mouse
 	block_mouse_input(true)
 	MouseGetPos, x, y
 	
-	; Hitbox workaround
+	; Cube hitbox detection workaround
+	coord := config.coords.cube
 	SendMode Event                        ; trigger mouse moving
-	MouseMove % point.x, % point.y - 50   ;  p1
-	MouseMove % point.x, % point.y, 2     ;  p2
+	MouseMove % coord.x, % coord.y - 50   ; start above target location
+	MouseMove % coord.x, % coord.y, 2     ; simulate moving over cube
 	SendMode Input                        ; set back to teleporting
-	sleep, % delay
 	
-	; Click at location
+	; Wait a for item pickup to register, then deposite into cube
+	sleep, % config.game.interactiondelay
 	SendInput, {LButton}
 
-    ; Revert position
 	MouseMove, % x, % y
 	block_mouse_input(false)
 }

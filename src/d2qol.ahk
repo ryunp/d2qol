@@ -13,6 +13,7 @@ global d2_window := "Diablo II ahk_class Diablo II"
 #NoEnv
 SetDefaultMouseSpeed, 0
 SendMode Input
+DetectHiddenWindows, On
 Hotkey, IfWinActive, % d2_window
 
 ; Dependencies
@@ -36,9 +37,17 @@ action_list.push({"id": "Repeat_Clicks", "label": "Clicker", "desc": "Continuous
 ; Set default config
 global config_file := "d2qol.json"
 global config := {"confirm_key": "Shift"
-    ,"coords":{"cube":{"x":0,"y":0},"transmute":{"x":0,"y":0}}
-	,"actions":{"Open_Cube":{"enabled":0,"hotkey":"F1"},"Open_Inv_Cube":{"enabled":0,"hotkey":"F2"},"Cube_Transmute":{"enabled":0,"hotkey":"F3"},"Place_In_Cube":{"enabled":0,"hotkey":"F4"},"Drop_Item":{"enabled":0,"hotkey":"F5"},"Repeat_Clicks":{"enabled":0,"hotkey":"F6","quantity":60,"delay":260,"disablemouse":1}}
-	,"game":{"keybinds":{"inventory":"i"},"manualpickup":0,"interactiondelay": 84}}
+    ,"coords":{"cube":{"x":0,"y":0}
+        ,"transmute":{"x":0,"y":0}}
+	,"actions":{"Open_Cube":{"enabled":0,"hotkey":"F1"}
+        ,"Open_Inv_Cube":{"enabled":0,"hotkey":"F2"}
+        ,"Cube_Transmute":{"enabled":0,"hotkey":"F3"}
+        ,"Place_In_Cube":{"enabled":0,"hotkey":"F4"}
+        ,"Drop_Item":{"enabled":0,"hotkey":"F5"}
+        ,"Repeat_Clicks":{"enabled":0,"hotkey":"F6","quantity":60,"delay":260,"disablemouse":1,"notifyprogress":1}}
+	,"game":{"manualpickup":0
+        ,"interactiondelay": 84
+        ,"keybinds":{"inventory":"i"}}}
 
 
 ; Override config if config file exists
@@ -81,6 +90,7 @@ return ; END AUTOEXEC
 OnExit("WinMainClose")
 WinMainClose() {
     global
+    static configsaved := 0
 
     if not (configsaved) {
         fh := FileOpen(config_file, "w")
