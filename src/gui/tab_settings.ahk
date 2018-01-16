@@ -87,7 +87,7 @@ _cb_check_clickerdisablemouse(CtrlHwnd) {
 }
 
 
-_cb_check_clickernotify() {
+_cb_check_clickernotify(CtrlHwnd) {
 	global
 
 	cfg := config.actions.Repeat_Clicks
