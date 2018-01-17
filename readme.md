@@ -5,7 +5,7 @@ This utility does nothing more than clicks on command in locations you have spec
 
 ### Features
 * GUI for configuration (no scripting required)
-* Preferences are saved on exit to a config file (d2qol.json)
+* Configurations are saved to *d2qol.json* on exit
 * Toggle action hotkeys on/off
 * Actions only operate within Diablo II window
 * Configure action behavior to cover various situations
@@ -16,7 +16,7 @@ This utility does nothing more than clicks on command in locations you have spec
 
 !["Settings UI screenshot"](media/d2qol_settings.png)
 
-!["Settings UI screenshot"](media/d2qol_settingstooltip.png)
+!["Settings UI screenshot with Tooltip"](media/d2qol_settingstooltip.png)
 
 ### Install
 Download [d2qol.exe](build/d2qol.exe).
@@ -40,11 +40,16 @@ Interaction Delay | Time period, in milliseconds, to delay during interaction wi
 Quickly reducing shrines into vessels
 ![Reducing shrines into vessel](media/d2qol_shrines.gif)
 
-### Known Issues
-**Settings not saving properly**  
-First quit the program, then delete the config file *d2qol.json*. Unfortunately settings will have to be reconfigured.
+### Settings Not Saving & Hotkey Errors
+This happens when a new version modifies the config file layout. If certain settings aren't saving, let it recreate the default config file by deleting *d2qol.json* while the utility is NOT running. For now, unfortunately, this means resetting your configurations.
 
-This was designed and tested under 800x600 resolution and DDraw. I've had reports of fullscreen having some issues with certain actions. Everything is based on user defined x,y locations, and the sequence of UI commands is nearly identical to human execution. *What can go wrong?™*
+### Non-English Windows
+Non-English Windows have been reported to produce '**Error: Nonexistent Hotkey**'. Possible workaround is installing AutoHotKey and running *src/d2qol.ahk* until further revelations. (Needs to be tested!)
+
+### Bugs & Feedback
+Tested under English version of Windows 7, 8, 10. If you leave an issue report please include OS version, error messages, config data, and specific changes before the error occurred.
+
+This was designed and tested under windowed 800x600 resolution and DDraw. Everything is based on user defined x,y locations, and the sequence of UI commands is nearly identical to human execution. *What can go wrong?™*
 
 ### FAQ
 **Q**: Run As Administrator? How can I trust you?  
