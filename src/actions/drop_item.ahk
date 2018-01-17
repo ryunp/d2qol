@@ -1,21 +1,19 @@
 Drop_Item() {
-	global
+    global
 
-	WinGetPos,,, wW, wH, A
-	
     ; Disable Auto-Pickup setting
-	if not (config.game.manualpickup) {
-		SendInput, {LButton}
-		sleep % config.game.interactiondelay
-	}
+    if not (config.game.manualpickup) {
+        SendInput, {LButton}
+        sleep % config.game.interactiondelay
+    }
 
-	block_mouse_input(true)
-	MouseGetPos, mX, mY
+    block_mouse_input(true)
+    MouseGetPos, mX, mY
 
-	; Drop in left half
-	MouseMove % wW * 0.25, wH * 0.5
-	SendInput, {LButton}
+    ; Drop 100px offset from top left of current windodw
+    MouseMove 100, 100
+    SendInput, {LButton}
 
-	MouseMove, % mX, % mY
-	block_mouse_input(false)
+    MouseMove, % mX, % mY
+    block_mouse_input(false)
 }

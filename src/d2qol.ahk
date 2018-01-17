@@ -1,20 +1,21 @@
-; ryunp[aul@g]mail
-; v2 1/13/18
-
-; Run as Admin guard
-if not A_IsAdmin {
-	Msgbox You must 'Run As Administrator' for this to work
-	ExitApp
-}
-
-global d2_window := "Diablo II ahk_class Diablo II"
-
-; Process settings
 #NoEnv
 SetDefaultMouseSpeed, 0
 SendMode Input
 DetectHiddenWindows, On
 Hotkey, IfWinActive, % d2_window
+
+
+; Run as Admin guard
+if not A_IsAdmin {
+    Msgbox You must 'Run As Administrator' for this to work
+    ExitApp
+}
+
+
+; App generic settings
+global d2_window := "Diablo II ahk_class Diablo II"
+global app_version := "1.3.6"
+
 
 ; Dependencies
 #Include, lib\HotkeyGui.ahk
@@ -65,7 +66,6 @@ for idx, action in action_list {
 	   register_hk(cfg.hotkey, action.id)
     }
 }
-
 
 ; Init Gui
 #include, gui\

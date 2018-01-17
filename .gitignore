@@ -1,6 +1,9 @@
 # Ignore config
 d2qol.json
 
+# Ignore photoshop
+*.psd
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

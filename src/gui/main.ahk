@@ -2,7 +2,7 @@ Gui, New, hwnd_win_main +labelWinMain, d2qol
 
 ; Help Link
 Gui, Add, Link, xm+210 ym, <a href="https://forum.median-xl.com/viewtopic.php?f=4&t=3302">Median XL Forum Thread</a>
-Gui, Add, Text, xm+340 ym, v1.3.5
+Gui, Add, Text, xm+340 ym, % "v" app_version
 
 ; Tabs
 Gui, add, Tab3, xm ym w380, Keybinds|Settings
@@ -17,7 +17,7 @@ Gui, Tab, Settings
 Gui, Show
 
 global tooltips := {"_ui_text_clickerquantity": "Amount of times for clicker to click the mouse.`nRecommended:`nDouble for vendor purchases (due to dialog)"
-    ,"_ui_text_clickerdelay": "The time period, in milliseconds, between clicks.`nRecommended:`n260 - Vendor purchase spam`n75-100 - stat point spam"
+    ,"_ui_text_clickerdelay": "The time period, in milliseconds, between clicks.`nRecommended:`n260 - Vendor purchase spam`n75-100 - stat point spam (too low causes DC)"
     ,"_ui_check_clickerdisablemouse": "Block any mouse movement during the clicking sequence.`nRecommended:`nDo you really want a bunch of MOs instead?"
     ,"_ui_check_clickernotify": "System tray tooltip showing sequence progress."
     ,"_ui_text_cubecoords": "X & Y coordinates of the Horadric Cube.`nRecommended:`nCenter of the cube for best results"
