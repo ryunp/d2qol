@@ -10,8 +10,8 @@ unregister_hk(hk) {
     Hotkey, % "*~" hk, Off
 }
 
-
 register_hk(hk, fn) {
+    Hotkey, IfWinActive, % d2_window
     Hotkey, % "*~" hk, % fn, On
 }
 

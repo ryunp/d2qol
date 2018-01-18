@@ -2,7 +2,10 @@
 SetDefaultMouseSpeed, 0
 SendMode Input
 DetectHiddenWindows, On
-Hotkey, IfWinActive, % d2_window
+
+; Globals
+global d2_window := "Diablo II ahk_class Diablo II"
+global app_version := "1.3.7"
 
 
 ; Run as Admin guard
@@ -12,12 +15,7 @@ if not A_IsAdmin {
 }
 
 
-; App generic settings
-global d2_window := "Diablo II ahk_class Diablo II"
-global app_version := "1.3.6"
-
-
-; Dependencies
+; App dependencies
 #Include, lib\HotkeyGui.ahk
 #Include, lib\json.ahk
 #Include, lib\lv_update.ahk
@@ -66,6 +64,7 @@ for idx, action in action_list {
 	   register_hk(cfg.hotkey, action.id)
     }
 }
+
 
 ; Init Gui
 #include, gui\

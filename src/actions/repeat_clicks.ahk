@@ -1,28 +1,25 @@
-; I think this continues to expand 'committed memory' with each object
-; initialization until app exit, so sorta memory leaks.
-; TODO: Convert to global state and static methods on object
 Repeat_Clicks() {
-    global
+    global    
 
-    cfg := config.actions.Repeat_Clicks
+    ; Singleton-ish
+    static looper
+    if not (looper) {
+        looper := new Action_Loop(func("rc_tick_callback"), d2_window)
+    }
     
-    ; Save handle to timer
-    static looper := ""
+    cfg := config.actions.Repeat_Clicks
+    if (looper.active) {
+        looper.stop()
 
-    if (looper && looper.active) {
         ; Block Mouse setting
         if (cfg.disablemouse) {
             block_mouse_input(false)
         }
-
-        looper.stop()
     } else {
-        looper := new Action_Loop(cfg.quantity, cfg.delay, func("rc_tick_callback"))
-        looper.setRequiredWindow("Diablo II ahk_class Diablo II")
-        looper.start()
+        looper.start(cfg.quantity, cfg.delay)
 
         ; Block Mouse setting
-         if (cfg.disablemouse) {
+        if (cfg.disablemouse) {
             block_mouse_input(true)
         }
     }
@@ -31,19 +28,19 @@ Repeat_Clicks() {
 rc_tick_callback(current, quantity, delay) {
     global
 
-    cfg := config.actions.Repeat_Clicks
-
     ; Action to perform
     SendInput, {LButton}
 
+    cfg := config.actions.Repeat_Clicks
+    
     ; Notify Progress setting
     if (cfg.notifyprogress) {
-        TrayTip, Clicker, % current "/" quantity " [" delay "ms]"
+        TrayTip, d2qol Clicker, % current "/" quantity " [" delay "ms]"
     }
 
-    ; Block Mouse setting
     if (current = quantity) {
-         if (cfg.disablemouse) {
+        ; Block Mouse setting
+        if (cfg.disablemouse) {
             block_mouse_input(false)
         }
     }

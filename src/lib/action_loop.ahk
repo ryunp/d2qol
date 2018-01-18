@@ -1,70 +1,44 @@
 Class Action_Loop {
 
-    _requiredWindow := ""
-    _action_fn := {}
-    _timer := {}
+    active := 0
+    callback := ""
+    tick_fn := ""
+    required_window := ""
+    quantity := 0
+    delay := 0
+    current_tick := 0
 
-    __New(quantity:=100, delay:=200, fn:="") {
-        this.quantity := quantity
-        this.current_tick := 0
-        this.delay := delay
-        this._action_fn := fn
-        this.active := 0
+    __New(callback, req_win:="") {
+        this.callback := callback
+        this.required_window := req_win
+        this.tick_fn := ObjBindMethod(this, "tick")
     }
 
-    setRequiredWindow(str) {
-        this._requiredWindow := str
-    }
-
-    setActionFn(fn) {
-        this._action_fn := fn
-    }
-
-    setQuantity(quantity) {
-        this.quantity := quantity
-    }
-
-    getQuantity() {
-        return this.quantity
-    }
-
-    setDelay(newDelay) {
-        this.delay := newDelay
-    }
-
-    getDelay() {
-        return this.delay
-    }
-
-
-
-    ; timer logic
-    start() {
+    start(quantity, delay) {
         this.active := 1
-        this._timer := ObjBindMethod(this, "tick")
-        
-        fn := this._timer
-        delay := this.delay
+        this.current_tick := 0
+        this.quantity := quantity
+        this.delay := delay
+
+        fn := this.tick_fn
         SetTimer, % fn, % delay
     }
 
     stop() {
         this.active := 0
 
-        fn := this._timer
+        fn := this.tick_fn
         setTimer, % fn, Off
     }
 
     tick() {
-        if not (WinActive(this._requiredWindow)) {
+        if (this.required_window and not winActive(this.required_window)) {
             this.stop()
             return
         }
 
-        if (this.current_tick < this.quantity) {
-            ; Execute callback with current parameters
-            this.current_tick += 1
-            this._action_fn.Call(this.current_tick, this.quantity, this.delay)
+        if (this.current_tick++ < this.quantity) {
+            this.callback.Call(this.current_tick, this.quantity, this.delay)
         } else {
             this.stop()
         }

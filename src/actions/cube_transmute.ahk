@@ -1,11 +1,10 @@
 Cube_Transmute() {
     global
 
-	point := config.coords.transmute
-
     block_mouse_input(true)
-	MouseGetPos, x, y
+    MouseGetPos, x, y
 
+	point := config.coords.transmute
 	MouseMove % point.x, % point.y
 	SendInput, {LButton}
 
