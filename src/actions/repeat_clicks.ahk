@@ -1,46 +1,45 @@
 Repeat_Clicks() {
-    global    
-
-    ; Singleton-ish
-    static looper
-    if not (looper) {
-        looper := new Action_Loop(func("rc_tick_callback"), d2_window)
+    static clicker
+    
+    ; Create a single instance of action loop for reuse
+    if not (clicker) {
+        clicker := new Action_Loop(func("_cb_repeat_clicks_tick"), D2_WINDOW)
     }
     
+    ; Check active status
     cfg := config.actions.Repeat_Clicks
-    if (looper.active) {
-        looper.stop()
+    if (clicker.active) {
+        clicker.stop()
 
-        ; Block Mouse setting
-        if (cfg.disablemouse) {
+        ; Optional mouse disable
+        if (cfg.disable_mouse) {
             block_mouse_input(false)
         }
     } else {
-        looper.start(cfg.quantity, cfg.delay)
+        clicker.start(cfg.quantity, cfg.delay)
 
-        ; Block Mouse setting
-        if (cfg.disablemouse) {
+        ; Optional mouse disable
+        if (cfg.disable_mouse) {
             block_mouse_input(true)
         }
     }
 }
 
-rc_tick_callback(current, quantity, delay) {
+_cb_repeat_clicks_tick(current, quantity, delay) {
     global
 
     ; Action to perform
     SendInput, {LButton}
 
+    ; Optional notify progress
     cfg := config.actions.Repeat_Clicks
-    
-    ; Notify Progress setting
-    if (cfg.notifyprogress) {
+    if (cfg.notify_progress) {
         TrayTip, d2qol Clicker, % current "/" quantity " [" delay "ms]"
     }
 
-    if (current = quantity) {
-        ; Block Mouse setting
-        if (cfg.disablemouse) {
+    ; Optional mouse disable
+    if (current >= quantity) {
+        if (cfg.disable_mouse) {
             block_mouse_input(false)
         }
     }

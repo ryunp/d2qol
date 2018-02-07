@@ -1,17 +1,15 @@
 Drop_Item() {
-    global
-
-    ; Disable Auto-Pickup setting
-    if not (config.game.manualpickup) {
+    ; Check settings for optional behavior
+    if not (config.user.manual_pickup) {
         SendInput, {LButton}
-        sleep % config.game.interactiondelay
+        sleep, % config.user.interaction_delay
     }
 
     block_mouse_input(true)
     MouseGetPos, mX, mY
 
-    ; Drop 100px offset from top left of current windodw
-    MouseMove 100, 100
+    ; Drop offset from top left of active window, which covers all resolutions
+    MouseMove, 10, 40
     SendInput, {LButton}
 
     MouseMove, % mX, % mY

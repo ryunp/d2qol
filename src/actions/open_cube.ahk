@@ -1,13 +1,11 @@
 Open_Cube() {
-    global
-
     block_mouse_input(true)
-    MouseGetPos, x, y
+    MouseGetPos, mX, mY
 
-    coord := config.coords.cube
-    MouseMove % coord.x, % coord.y
+    point := config.user.coords_cube
+    MouseMove, % point.x, % point.y
     SendInput, {RButton}
     
-    MouseMove, % x, % y
+    MouseMove, % mX, % mY
     block_mouse_input(false)
 }

@@ -1,25 +1,26 @@
 Place_In_Cube() {
 	global
 
-	if not (config.game.manualpickup) {
+    ; Optional auto-pickup
+	if not (config.user.manual_pickup) {
 		SendInput, {LButton}
-		sleep % config.game.interactiondelay
+		sleep, % config.user.interaction_delay
 	}
 
 	block_mouse_input(true)
-	MouseGetPos, x, y
+	MouseGetPos, mX, mY
 	
 	; Cube hitbox detection workaround
-	coord := config.coords.cube
-	SendMode Event                        ; trigger mouse moving
-	MouseMove % coord.x, % coord.y - 50   ; start above target location
-	MouseMove % coord.x, % coord.y, 2     ; simulate moving over cube
-	SendMode Input                        ; set back to teleporting
+	point := config.user.coords_cube
+	SendMode, Event                        ; trigger mouse moving
+	MouseMove, % point.x, % point.y - 50   ; start above target location
+	MouseMove, % point.x, % point.y, 2     ; simulate moving over cube
+	SendMode, Input                        ; set back to teleporting
 	
-	; Wait a for item pickup to register, then deposite into cube
-	sleep, % config.game.interactiondelay
+	; Wait for dragging over cube's hitbox to register
+	sleep, % config.user.interaction_delay
 	SendInput, {LButton}
 
-	MouseMove, % x, % y
+	MouseMove, % mX, % mY
 	block_mouse_input(false)
 }

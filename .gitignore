@@ -1,3 +1,6 @@
+# Ignore archived media
+media/archive/
+
 # Ignore config
 d2qol.json
 

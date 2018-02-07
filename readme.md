@@ -4,12 +4,16 @@ Median XL's end-game requires highly repetitive crafting mechanics. Working with
 This utility does nothing more than clicks on command in locations you have specified. There is no memory peeking, no gameplay logic, nothing outside the capabilities a human can perform.
 
 ### Features
+* Supports all resolutions
 * GUI for configuration (no scripting required)
-* Configurations are saved to *d2qol.json* on exit
+* Configurations are saved to d2qol.json on exit
+* Any configuration inconsistencies are notified and offending items reverted to defaults
 * Toggle action hotkeys on/off
 * Actions only operate within Diablo II window
 * Configure action behavior to cover various situations
+* Hovering over settings will reveal more details about it's functionality
 * Adjustable actions timing to compensate for latency issues
+
 
 ### Gui
 !["Keybinds UI screenshot"](media/d2qol_keybinds.png)
@@ -40,12 +44,6 @@ Interaction Delay | Time period, in milliseconds, to delay during interaction wi
 Quickly reducing shrines into vessels
 ![Reducing shrines into vessel](media/d2qol_shrines.gif)
 
-### Settings Not Saving & Hotkey Errors
-This happens when a new version modifies the config file layout. If certain settings aren't saving, let it recreate the default config file by deleting *d2qol.json* while the utility is NOT running. For now, unfortunately, this means resetting your configurations.
-
-### Non-English Windows
-Non-English Windows have been reported to produce '**Error: Nonexistent Hotkey**'. Possible workaround is installing AutoHotKey and running *src/d2qol.ahk* until further revelations. (Needs to be tested!)
-
 ### Bugs & Feedback
 Tested under English version of Windows 7, 8, 10. If you leave an issue report please include OS version, error messages, config data, and specific changes before the error occurred.
 
@@ -57,3 +55,32 @@ This was designed and tested under windowed 800x600 resolution and DDraw. Everyt
 
 **Q**: This thing is broken and/or sucks balls  
 **A**: Yes.
+
+
+### Changelog
+**1.4.0 - 2/6/18**  
+* Fixed settings not saving on Exit (only worked on Closing)
+* Fixed hotkey logic that caused errors when trying assigning hotkey in various states
+* Added more dynamic config file loading to account for changes in internal config data structure. No more manual fixing.
+* Added app icon to replace default AHK image
+* Updated to a newer JSON library
+* Updated overall consistency of code formatting/syntax
+* Moved UI code layout to centralize definition and event handler code together in one place
+* Updated certain variable names for clarity
+* Moved version and forum link into new About tab
+* Adjusted a few Tooltip strings
+
+**1.3.7 - 1/17/18**  
+* [Action] Refactored Action_Loop object: Now uses same object instead of recreating
+
+**1.3.6 - 1/17/18**  
+* [Action] Drop Item fixed: Now works in fullscreen mode
+
+**1.3.5 - 1/16/18**  
+* [UI] Notify Progress fixed: Parameter for handler function missing
+
+**1.3.4 - 1/16/18**  
+* [Settings] Action Interaction Delay Added: Can adjust for action click timing depending on latency
+* [Settings] Clicker Notify Progress Added: Toggle system tray popup of progress
+* [UI] Added setting tooltips to explain more details
+* [App] Added versioning system with Major.Minor.Hotfix scheme

@@ -1,223 +1,374 @@
-; Copyright © 2013 VxE. All rights reserved.
-; Serialize an object as JSON-like text OR format a string for inclusion therein.
-; NOTE: scientific notation is treated as a string and hexadecimal as a number.
-; NOTE: UTF-8 sequences are encoded as-is, NOT as their intended codepoint.
+/**
+ * Lib: JSON.ahk
+ *     JSON lib for AutoHotkey.
+ * Version:
+ *     v2.1.3 [updated 04/18/2016 (MM/DD/YYYY)]
+ * License:
+ *     WTFPL [http://wtfpl.net/]
+ * Requirements:
+ *     Latest version of AutoHotkey (v1.1+ or v2.0-a+)
+ * Installation:
+ *     Use #Include JSON.ahk or copy into a function library folder and then
+ *     use #Include <JSON>
+ * Links:
+ *     GitHub:     - https://github.com/cocobelgica/AutoHotkey-JSON
+ *     Forum Topic - http://goo.gl/r0zI8t
+ *     Email:      - cocobelgica <at> gmail <dot> com
+ */
 
-class json {
 
-    prettify(Obj) {
-    	str := this.parseStructure(Obj)
+/**
+ * Class: JSON
+ *     The JSON object contains methods for parsing JSON and converting values
+ *     to JSON. Callable - NO; Instantiable - YES; Subclassable - YES;
+ *     Nestable(via #Include) - NO.
+ * Methods:
+ *     Load() - see relevant documentation before method definition header
+ *     Dump() - see relevant documentation before method definition header
+ */
+class JSON
+{
+    /**
+     * Method: Load
+     *     Parses a JSON string into an AHK value
+     * Syntax:
+     *     value := JSON.Load( text [, reviver ] )
+     * Parameter(s):
+     *     value      [retval] - parsed value
+     *     text    [in, ByRef] - JSON formatted string
+     *     reviver   [in, opt] - function object, similar to JavaScript's
+     *                           JSON.parse() 'reviver' parameter
+     */
+    class Load extends JSON.Functor
+    {
+        Call(self, ByRef text, reviver:="")
+        {
+            this.rev := IsObject(reviver) ? reviver : false
+        ; Object keys(and array indices) are temporarily stored in arrays so that
+        ; we can enumerate them in the order they appear in the document/text instead
+        ; of alphabetically. Skip if no reviver function is specified.
+            this.keys := this.rev ? {} : false
 
-    	if (Obj.MaxIndex() > 0)
-    		str := "[`r`n" str "`r`n]"
-    	else
-    		str := "{`r`n" str "`r`n}"
+            static quot := Chr(34), bashq := "\" . quot
+                 , json_value := quot . "{[01234567890-tfn"
+                 , json_value_or_array_closing := quot . "{[]01234567890-tfn"
+                 , object_key_or_object_closing := quot . "}"
 
-        return str
-    }
-    
-    parseStructure(Obj, Depth:=99, CurIndent:="", NL:="`r`n", Equal:=":", Indent:="`t") {
-    	; Adjust indent
-    	CurIndent := CurIndent . Indent
+            key := ""
+            is_key := false
+            root := {}
+            stack := [root]
+            next := json_value
+            pos := 0
 
-    	; Get iteration count
-        for k in Obj
-            len := A_Index
+            while ((ch := SubStr(text, ++pos, 1)) != "") {
+                if InStr(" `t`r`n", ch)
+                    continue
+                if !InStr(next, ch, 1)
+                    this.ParseError(next, text, pos)
 
-        ; Iterate over each item
-        for k,v in Obj {
+                holder := stack[1]
+                is_array := holder.IsArray
 
-			; Determine value scheme
-            if (Obj.MaxIndex() > 0) {
-            	; In array
-                ToReturn .= CurIndent
-            } else {
-                ; In dictionary
-                ToReturn .= CurIndent . """" k """" . Equal . " "
-            }
+                if InStr(",:", ch) {
+                    next := (is_key := !is_array && ch == ",") ? quot : json_value
 
-            ; Value either array/dict or primative
-            if ((isObject(v)) && (depth>1)) {
+                } else if InStr("}]", ch) {
+                    ObjRemoveAt(stack, 1)
+                    next := stack[1]==root ? "" : stack[1].IsArray ? ",]" : ",}"
 
-	            ; Determine the value's wrapping symbol
-                if (v.MaxIndex() > 0) {
-                    ; Array
-                    ToReturn .= "[" . NL
-                    ToReturn .= this.parseStructure(v, Depth-1, CurIndent)
-                    ToReturn .= NL . CurIndent . "]"
                 } else {
-                    ; Dictionary
-                    ToReturn .= "{" . NL
-                    ToReturn .= this.parseStructure(v, Depth-1, CurIndent)
-                    ToReturn .= NL . CurIndent . "}"
-                }
-            } else {
-                ; primative (string, int, etc)
-                if v is not number
-                    v := """" v """"
+                    if InStr("{[", ch) {
+                    ; Check if Array() is overridden and if its return value has
+                    ; the 'IsArray' property. If so, Array() will be called normally,
+                    ; otherwise, use a custom base object for arrays
+                        static json_array := Func("Array").IsBuiltIn || ![].IsArray ? {IsArray: true} : 0
+                    
+                    ; sacrifice readability for minor(actually negligible) performance gain
+                        (ch == "{")
+                            ? ( is_key := true
+                              , value := {}
+                              , next := object_key_or_object_closing )
+                        ; ch == "["
+                            : ( value := json_array ? new json_array : []
+                              , next := json_value_or_array_closing )
+                        
+                        ObjInsertAt(stack, 1, value)
 
-                ToReturn .= v
+                        if (this.keys)
+                            this.keys[value] := []
+                    
+                    } else {
+                        if (ch == quot) {
+                            i := pos
+                            while (i := InStr(text, quot,, i+1)) {
+                                value := StrReplace(SubStr(text, pos+1, i-pos-1), "\\", "\u005c")
+
+                                static tail := A_AhkVersion<"2" ? 0 : -1
+                                if (SubStr(value, tail) != "\")
+                                    break
+                            }
+
+                            if (!i)
+                                this.ParseError("'", text, pos)
+
+                              value := StrReplace(value,  "\/",  "/")
+                            , value := StrReplace(value, bashq, quot)
+                            , value := StrReplace(value,  "\b", "`b")
+                            , value := StrReplace(value,  "\f", "`f")
+                            , value := StrReplace(value,  "\n", "`n")
+                            , value := StrReplace(value,  "\r", "`r")
+                            , value := StrReplace(value,  "\t", "`t")
+
+                            pos := i ; update pos
+                            
+                            i := 0
+                            while (i := InStr(value, "\",, i+1)) {
+                                if !(SubStr(value, i+1, 1) == "u")
+                                    this.ParseError("\", text, pos - StrLen(SubStr(value, i+1)))
+
+                                uffff := Abs("0x" . SubStr(value, i+2, 4))
+                                if (A_IsUnicode || uffff < 0x100)
+                                    value := SubStr(value, 1, i-1) . Chr(uffff) . SubStr(value, i+6)
+                            }
+
+                            if (is_key) {
+                                key := value, next := ":"
+                                continue
+                            }
+                        
+                        } else {
+                            value := SubStr(text, pos, i := RegExMatch(text, "[\]\},\s]|$",, pos)-pos)
+
+                            static number := "number", integer :="integer"
+                            if value is %number%
+                            {
+                                if value is %integer%
+                                    value += 0
+                            }
+                            else if (value == "true" || value == "false")
+                                value := %value% + 0
+                            else if (value == "null")
+                                value := ""
+                            else
+                            ; we can do more here to pinpoint the actual culprit
+                            ; but that's just too much extra work.
+                                this.ParseError(next, text, pos, i)
+
+                            pos += i-1
+                        }
+
+                        next := holder==root ? "" : is_array ? ",]" : ",}"
+                    } ; If InStr("{[", ch) { ... } else
+
+                    is_array? key := ObjPush(holder, value) : holder[key] := value
+
+                    if (this.keys && this.keys.HasKey(holder))
+                        this.keys[holder].Push(key)
+                }
+            
+            } ; while ( ... )
+
+            return this.rev ? this.Walk(root, "") : root[""]
+        }
+
+        ParseError(expect, ByRef text, pos, len:=1)
+        {
+            static quot := Chr(34), qurly := quot . "}"
+            
+            line := StrSplit(SubStr(text, 1, pos), "`n", "`r").Length()
+            col := pos - InStr(text, "`n",, -(StrLen(text)-pos+1))
+            msg := Format("{1}`n`nLine:`t{2}`nCol:`t{3}`nChar:`t{4}"
+            ,     (expect == "")     ? "Extra data"
+                : (expect == "'")    ? "Unterminated string starting at"
+                : (expect == "\")    ? "Invalid \escape"
+                : (expect == ":")    ? "Expecting ':' delimiter"
+                : (expect == quot)   ? "Expecting object key enclosed in double quotes"
+                : (expect == qurly)  ? "Expecting object key enclosed in double quotes or object closing '}'"
+                : (expect == ",}")   ? "Expecting ',' delimiter or object closing '}'"
+                : (expect == ",]")   ? "Expecting ',' delimiter or array closing ']'"
+                : InStr(expect, "]") ? "Expecting JSON value or array closing ']'"
+                :                      "Expecting JSON value(string, number, true, false, null, object or array)"
+            , line, col, pos)
+
+            static offset := A_AhkVersion<"2" ? -3 : -4
+            throw Exception(msg, offset, SubStr(text, pos, len))
+        }
+
+        Walk(holder, key)
+        {
+            value := holder[key]
+            if IsObject(value) {
+                for i, k in this.keys[value] {
+                    ; check if ObjHasKey(value, k) ??
+                    v := this.Walk(value, k)
+                    if (v != JSON.Undefined)
+                        value[k] := v
+                    else
+                        ObjDelete(value, k)
+                }
             }
-
-            ; Add comma after value if more items
-            if (A_Index < len)
-                ToReturn .= ","
-
-            ToReturn .= NL
+            
+            return this.rev.Call(holder, key, value)
         }
-        return RTrim(ToReturn, NL)
     }
-    
-    write( obj ) {
-        return this.fromObj( obj )
-    }
-    fromObj( obj ) { ;_json_fromobj
 
-        If IsObject( obj )
+    /**
+     * Method: Dump
+     *     Converts an AHK value into a JSON string
+     * Syntax:
+     *     str := JSON.Dump( value [, replacer, space ] )
+     * Parameter(s):
+     *     str        [retval] - JSON representation of an AHK value
+     *     value          [in] - any value(object, string, number)
+     *     replacer  [in, opt] - function object, similar to JavaScript's
+     *                           JSON.stringify() 'replacer' parameter
+     *     space     [in, opt] - similar to JavaScript's JSON.stringify()
+     *                           'space' parameter
+     */
+    class Dump extends JSON.Functor
+    {
+        Call(self, value, replacer:="", space:="")
         {
-            isarray := 0 ; an empty object could be an array... but it ain't, says I
-            for key in obj
-                if ( key != ++isarray )
-                {
-                    isarray := 0
-                    Break
-                }
+            this.rep := IsObject(replacer) ? replacer : ""
 
-            for key, val in obj
-                str .= ( A_Index = 1 ? "" : "," ) ( isarray ? "" : this.write( key ) ":" ) this.write( val )
-
-            return isarray ? "[" str "]" : "{" str "}"
-        }
-        else if obj IS NUMBER
-            return obj
-    ;   else if obj IN null,true,false ; AutoHotkey does not natively distinguish these
-    ;       return obj
-
-        ; Encode control characters, starting with backslash.
-        StringReplace, obj, obj, \, \\, A
-        StringReplace, obj, obj, % Chr(08), \b, A
-        StringReplace, obj, obj, % A_Tab, \t, A
-        StringReplace, obj, obj, `n, \n, A
-        StringReplace, obj, obj, % Chr(12), \f, A
-        StringReplace, obj, obj, `r, \r, A
-        StringReplace, obj, obj, ", \", A
-        StringReplace, obj, obj, /, \/, A
-        While RegexMatch( obj, "[^\x20-\x7e]", key )
-        {
-            str := Asc( key )
-            val := "\u" . Chr( ( ( str >> 12 ) & 15 ) + ( ( ( str >> 12 ) & 15 ) < 10 ? 48 : 55 ) )
-                    . Chr( ( ( str >> 8 ) & 15 ) + ( ( ( str >> 8 ) & 15 ) < 10 ? 48 : 55 ) )
-                    . Chr( ( ( str >> 4 ) & 15 ) + ( ( ( str >> 4 ) & 15 ) < 10 ? 48 : 55 ) )
-                    . Chr( ( str & 15 ) + ( ( str & 15 ) < 10 ? 48 : 55 ) )
-            StringReplace, obj, obj, % key, % val, A
-        }
-        return """" obj """"
-    } ; this.write( obj )
-
-    ; Uses a two-pass iterative approach to deserialize a json string
-    read( str ) {
-        return this.toObj( str )
-    }
-    toObj( str ) { ;_json_toobj
-
-        quot := """" ; firmcoded specifically for readability. Hardcode for (minor) performance gain
-        ws := "`t`n`r " Chr(160) ; whitespace plus NBSP. This gets trimmed from the markup
-        obj := {} ; dummy object
-        objs := [] ; stack
-        keys := [] ; stack
-        isarrays := [] ; stack
-        literals := [] ; queue
-        y := nest := 0
-
-    ; First pass swaps out literal strings so we can parse the markup easily
-        StringGetPos, z, str, %quot% ; initial seek
-        while !ErrorLevel
-        {
-            ; Look for the non-literal quote that ends this string. Encode literal backslashes as '\u005C' because the
-            ; '\u..' entities are decoded last and that prevents literal backslashes from borking normal characters
-            StringGetPos, x, str, %quot%,, % z + 1
-            while !ErrorLevel
-            {
-                StringMid, key, str, z + 2, x - z - 1
-                StringReplace, key, key, \\, \u005C, A
-                If SubStr( key, 0 ) != "\"
-                    Break
-                StringGetPos, x, str, %quot%,, % x + 1
-            }
-        ;   StringReplace, str, str, %quot%%t%%quot%, %quot% ; this might corrupt the string
-            str := ( z ? SubStr( str, 1, z ) : "" ) quot SubStr( str, x + 2 ) ; this won't
-
-        ; Decode entities
-            StringReplace, key, key, \%quot%, %quot%, A
-            StringReplace, key, key, \b, % Chr(08), A
-            StringReplace, key, key, \t, % A_Tab, A
-            StringReplace, key, key, \n, `n, A
-            StringReplace, key, key, \f, % Chr(12), A
-            StringReplace, key, key, \r, `r, A
-            StringReplace, key, key, \/, /, A
-            while y := InStr( key, "\u", 0, y + 1 )
-                if ( A_IsUnicode || Abs( "0x" SubStr( key, y + 2, 4 ) ) < 0x100 )
-                    key := ( y = 1 ? "" : SubStr( key, 1, y - 1 ) ) Chr( "0x" SubStr( key, y + 2, 4 ) ) SubStr( key, y + 6 )
-
-            literals.insert(key)
-
-            StringGetPos, z, str, %quot%,, % z + 1 ; seek
-        }
-
-    ; Second pass parses the markup and builds the object iteratively, swapping placeholders as they are encountered
-        key := isarray := 1
-
-        ; The outer loop splits the blob into paths at markers where nest level decreases
-        Loop Parse, str, % "]}"
-        {
-            StringReplace, str, A_LoopField, [, [], A ; mark any array open-brackets
-
-            ; This inner loop splits the path into segments at markers that signal nest level increases
-            Loop Parse, str, % "[{"
-            {
-                ; The first segment might contain members that belong to the previous object
-                ; Otherwise, push the previous object and key to their stacks and start a new object
-                if ( A_Index != 1 )
-                {
-                    objs.insert( obj )
-                    isarrays.insert( isarray )
-                    keys.insert( key )
-                    obj := {}
-                    isarray := key := Asc( A_LoopField ) = 93
-                }
-
-                ; arrrrays are made by pirates and they have index keys
-                if ( isarray )
-                {
-                    Loop Parse, A_LoopField, `,, % ws "]"
-                        if ( A_LoopField != "" )
-                            obj[key++] := A_LoopField = quot ? literals.remove(1) : A_LoopField
-                }
-                ; otherwise, parse the segment as key/value pairs
+            this.gap := ""
+            if (space) {
+                static integer := "integer"
+                if space is %integer%
+                    Loop, % ((n := Abs(space))>10 ? 10 : n)
+                        this.gap .= " "
                 else
-                {
-                    Loop Parse, A_LoopField, `,
-                        Loop Parse, A_LoopField, :, % ws
-                            if ( A_Index = 1 )
-                                key := A_LoopField = quot ? literals.remove(1) : A_LoopField
-                            else if ( A_Index = 2 && A_LoopField != "" )
-                                obj[key] := A_LoopField = quot ? literals.remove(1) : A_LoopField
+                    this.gap := SubStr(space, 1, 10)
+
+                this.indent := "`n"
+            }
+
+            return this.Str({"": value}, "")
+        }
+
+        Str(holder, key)
+        {
+            value := holder[key]
+
+            if (this.rep)
+                value := this.rep.Call(holder, key, ObjHasKey(holder, key) ? value : JSON.Undefined)
+
+            if IsObject(value) {
+            ; Check object type, skip serialization for other object types such as
+            ; ComObject, Func, BoundFunc, FileObject, RegExMatchObject, Property, etc.
+                static type := A_AhkVersion<"2" ? "" : Func("Type")
+                if (type ? type.Call(value) == "Object" : ObjGetCapacity(value) != "") {
+                    if (this.gap) {
+                        stepback := this.indent
+                        this.indent .= this.gap
+                    }
+
+                    is_array := value.IsArray
+                ; Array() is not overridden, rollback to old method of
+                ; identifying array-like objects. Due to the use of a for-loop
+                ; sparse arrays such as '[1,,3]' are detected as objects({}). 
+                    if (!is_array) {
+                        for i in value
+                            is_array := i == A_Index
+                        until !is_array
+                    }
+
+                    str := ""
+                    if (is_array) {
+                        Loop, % value.Length() {
+                            if (this.gap)
+                                str .= this.indent
+                            
+                            v := this.Str(value, A_Index)
+                            str .= (v != "") ? v . "," : "null,"
+                        }
+                    } else {
+                        colon := this.gap ? ": " : ":"
+                        for k in value {
+                            v := this.Str(value, k)
+                            if (v != "") {
+                                if (this.gap)
+                                    str .= this.indent
+
+                                str .= this.Quote(k) . colon . v . ","
+                            }
+                        }
+                    }
+
+                    if (str != "") {
+                        str := RTrim(str, ",")
+                        if (this.gap)
+                            str .= stepback
+                    }
+
+                    if (this.gap)
+                        this.indent := stepback
+
+                    return is_array ? "[" . str . "]" : "{" . str . "}"
                 }
-                nest += A_Index > 1
-            } ; Loop Parse, str, % "[{"
+            
+            } else ; is_number ? value : "value"
+                return ObjGetCapacity([value], 1)=="" ? value : this.Quote(value)
+        }
 
-            If !--nest
-                Break
+        Quote(string)
+        {
+            static quot := Chr(34), bashq := "\" . quot
 
-            ; Insert the newly closed object into the one on top of the stack, then pop the stack
-            pbj := obj
-            obj := objs.remove()
-            obj[key := keys.remove()] := pbj
-            If ( isarray := isarrays.remove() )
-                key++
+            if (string != "") {
+                  string := StrReplace(string,  "\",  "\\")
+                ; , string := StrReplace(string,  "/",  "\/") ; optional in ECMAScript
+                , string := StrReplace(string, quot, bashq)
+                , string := StrReplace(string, "`b",  "\b")
+                , string := StrReplace(string, "`f",  "\f")
+                , string := StrReplace(string, "`n",  "\n")
+                , string := StrReplace(string, "`r",  "\r")
+                , string := StrReplace(string, "`t",  "\t")
 
-        } ; Loop Parse, str, % "]}"
+                static rx_escapable := A_AhkVersion<"2" ? "O)[^\x20-\x7e]" : "[^\x20-\x7e]"
+                while RegExMatch(string, rx_escapable, m)
+                    string := StrReplace(string, m.Value, Format("\u{1:04x}", Ord(m.Value)))
+            }
 
-        Return obj
-    } ; _json_toobj( str )
+            return quot . string . quot
+        }
+    }
+
+    /**
+     * Property: Undefined
+     *     Proxy for 'undefined' type
+     * Syntax:
+     *     undefined := JSON.Undefined
+     * Remarks:
+     *     For use with reviver and replacer functions since AutoHotkey does not
+     *     have an 'undefined' type. Returning blank("") or 0 won't work since these
+     *     can't be distnguished from actual JSON values. This leaves us with objects.
+     *     Replacer() - the caller may return a non-serializable AHK objects such as
+     *     ComObject, Func, BoundFunc, FileObject, RegExMatchObject, and Property to
+     *     mimic the behavior of returning 'undefined' in JavaScript but for the sake
+     *     of code readability and convenience, it's better to do 'return JSON.Undefined'.
+     *     Internally, the property returns a ComObject with the variant type of VT_EMPTY.
+     */
+    Undefined[]
+    {
+        get {
+            static empty := {}, vt_empty := ComObject(0, &empty, 1)
+            return vt_empty
+        }
+    }
+
+    class Functor
+    {
+        __Call(method, ByRef arg, args*)
+        {
+        ; When casting to Call(), use a new instance of the "function object"
+        ; so as to avoid directly storing the properties(used across sub-methods)
+        ; into the "function object" itself.
+            if IsObject(method)
+                return (new this).Call(method, arg, args*)
+            else if (method == "")
+                return (new this).Call(arg, args*)
+        }
+    }
 }
