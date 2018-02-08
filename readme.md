@@ -1,4 +1,4 @@
-## d2QoL
+## d2QoL v1.4.1
 Median XL's end-game requires highly repetitive crafting mechanics. Working with the cube slowly not only eats away at game time, but can also cause physical stress on the wrists and fingers. Since the nature of these actions is so well defined, it makes perfect target for automation. This was designed foremost as a crafting QoL utility, but it easily extends out to enhance normal gameplay.
 
 This utility does nothing more than clicks on command in locations you have specified. There is no memory peeking, no gameplay logic, nothing outside the capabilities a human can perform.
@@ -58,10 +58,13 @@ This was designed and tested under windowed 800x600 resolution and DDraw. Everyt
 
 
 ### Changelog
+**1.4.1 - 2/7/18**  
+* Fixed an issue with releasing the mouse block during clicking sequence when window focus changes
+
 **1.4.0 - 2/6/18**  
 * Fixed settings not saving on Exit (only worked on Closing)
 * Fixed hotkey logic that caused errors when trying assigning hotkey in various states
-* Added more dynamic config file loading to account for changes in internal config data structure. No more manual fixing.
+* Added more dynamic config file loading to account for changes in internal config data structure, no more manual fixing
 * Added app icon to replace default AHK image
 * Updated to a newer JSON library
 * Updated overall consistency of code formatting/syntax

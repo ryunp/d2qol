@@ -38,7 +38,7 @@ if not A_IsAdmin {
 ;------------------
 
 ; Global Vars
-global APP_VERSION := "1.4.0"
+global APP_VERSION := "1.4.1"
 global CONFIG_FILE := "d2qol.json"
 global D2_WINDOW := "Diablo II ahk_class Diablo II"
 global GAME_FPS := 25
