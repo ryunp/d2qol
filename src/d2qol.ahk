@@ -38,7 +38,7 @@ if not A_IsAdmin {
 ;------------------
 
 ; Global Vars
-global APP_VERSION := "1.4.1"
+global APP_VERSION := "1.4.2"
 global CONFIG_FILE := "d2qol.json"
 global D2_WINDOW := "Diablo II ahk_class Diablo II"
 global GAME_FPS := 25
@@ -55,7 +55,7 @@ global action_list := [{"fn": "Open_Cube", "label": "Open Cube", "desc": "Opens 
 
 ; Define UI settings hover strings
 global tooltips := {"ui_clicker_quantity": "Amount of times for clicker to click the mouse.`nRecommended:`nDouble for vendor purchases (due to dialog)"
-    ,"ui_clicker_delay": "The time period, in milliseconds, between clicks.`nRecommended:`n260 - Vendor purchase spam`n75-100 - stat point spam (too low causes DC)"
+    ,"ui_clicker_delay": "The time period, in milliseconds, between clicks. Not affected by 'Interaction Delay'.`nRecommended:`n260 - Vendor purchase spam`n75-100 - Stat point spam (too low causes DC)"
     ,"ui_clicker_disable_mouse": "Block any mouse movement during the clicking sequence.`nRecommended:`nDo you really want a bunch of MOs instead?"
     ,"ui_clicker_notify": "System tray tooltip showing sequence progress."
     ,"ui_coords_cube": "(x,y) coordinates of the Horadric Cube.`nRecommended:`nCenter of the cube for best results"

@@ -1,7 +1,11 @@
-## d2QoL v1.4.1
+# d2QoL v1.4.2
+## AutoHotKey based utility for a Diablo II mod Median XL to reduce stress on fingers and wrist.
+
 Median XL's end-game requires highly repetitive crafting mechanics. Working with the cube slowly not only eats away at game time, but can also cause physical stress on the wrists and fingers. Since the nature of these actions is so well defined, it makes perfect target for automation. This was designed foremost as a crafting QoL utility, but it easily extends out to enhance normal gameplay.
 
 This utility does nothing more than clicks on command in locations you have specified. There is no memory peeking, no gameplay logic, nothing outside the capabilities a human can perform.
+
+General feedback and discussion is facilitated at the [Median XL forum thread](https://forum.median-xl.com/viewtopic.php?f=4&t=3302&sid=a2d830fa9aefb97dcc5264fc48caab65).
 
 ### Features
 * Supports all resolutions
@@ -58,6 +62,11 @@ This was designed and tested under windowed 800x600 resolution and DDraw. Everyt
 
 
 ### Changelog
+**1.4.2 - 5/26/18**
+* Added link to forum
+* Updated clicker setting tooltip
+* Removed unnecessary bits of code
+
 **1.4.1 - 2/7/18**  
 * Fixed an issue with releasing the mouse block during clicking sequence when window focus changes
 

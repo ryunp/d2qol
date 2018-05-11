@@ -16,16 +16,16 @@ Gui, Add, GroupBox, Section h120 w140, Clicker
 		config.actions.Repeat_Clicks.delay := delay
 	}
 
-	; Disable mouse when running
-	Gui, Add, Checkbox, % "vui_clicker_disable_mouse AltSubmit xs h20 gcb_clicker_disable_mouse", Disable Mouse
+	; Toggle mouse control when running
+	Gui, Add, Checkbox, vui_clicker_disable_mouse AltSubmit xs h20 gcb_clicker_disable_mouse, Disable Mouse
 	GuiControl,, ui_clicker_disable_mouse, % config.actions.Repeat_Clicks.disable_mouse 
 	cb_clicker_disable_mouse(CtrlHwnd) {
 		GuiControlGet, state,, % CtrlHwnd
 	    config.actions.Repeat_Clicks.disable_mouse := state
 	}
 
-	; Disable mouse when running
-	Gui, Add, Checkbox, % "vui_clicker_notify AltSubmit xs yp+20 h20 gcb_clicker_notify", Notify Progress
+	; Toggle traytip when running
+	Gui, Add, Checkbox, vui_clicker_notify AltSubmit xs yp+20 h20 gcb_clicker_notify, Notify Progress
 	GuiControl,, ui_clicker_notify, % config.actions.Repeat_Clicks.notify_progress
 	cb_clicker_notify(CtrlHwnd) {
 		GuiControlGet, state,, % CtrlHwnd
@@ -62,7 +62,7 @@ Gui, Add, GroupBox, Section h120 w200 xm+160 ym+28, In-Game
 		}
 	}
 
-	; In-game Inventory Keybind
+	; In-game inventory keybind
 	Gui, Add, Button, Section xs w70 h20 gcb_game_inventory, % config.user.game_keybind_inventory
 	Gui, Add, Text, vui_game_inventory ys+3 gNOP, Open Inventory Panel
 	cb_game_inventory(CtrlHwnd) {
@@ -85,7 +85,7 @@ Gui, Add, GroupBox, Section h50 w348 xm+12 ym+151, Actions
 	    config.user.manual_pickup := state
 	}
 
-	; Latency between game client interaction
+	; Latency during game client interaction
 	Gui, Add, Edit, Section ys xm+171 w50 h20 gcb_interaction_delay, % config.user.interaction_delay
 	Gui, Add, Text, vui_interaction_delay ys+3 gNOP, Interaction Delay (ms)
 	cb_interaction_delay(CtrlHwnd) {
@@ -93,13 +93,10 @@ Gui, Add, GroupBox, Section h50 w348 xm+12 ym+151, Actions
 	    config.user.interaction_delay := value
 	}
 
+
 ;----------
 ; Helpers
-;----------
-
-get_coords() {
-
-}
+;--------
 
 ; Workaround helper function for text controls to show tooltip
 NOP(){
