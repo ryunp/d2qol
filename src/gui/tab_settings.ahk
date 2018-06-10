@@ -41,8 +41,7 @@ Gui, Add, GroupBox, Section h120 w200 xm+160 ym+28, In-Game
 	Gui, Add, Button, Section xs+10 ys+20 w70 h20 gcb_coords_cube, % point.x ", " point.y
 	Gui, Add, Text, vui_coords_cube ys+3 gNOP, Cube Location (px)
 	cb_coords_cube(CtrlHwnd) {
-		msg := Format("Place mouse over {} and press {}", "Horadric Cube", KEY_WAIT)
-		point := prompt_mouse_coords(KEY_WAIT, msg, D2_WINDOW)
+		point := prompt_mouse_coords("Shift", "Horadric Cube", D2_WINDOW)
 		if (point) {
 			config.user.coords_cube := point
 			GuiControl,, % CtrlHwnd, % point.x ", " point.y
@@ -54,8 +53,7 @@ Gui, Add, GroupBox, Section h120 w200 xm+160 ym+28, In-Game
 	Gui, Add, Button, Section xs w70 h20 gcb_coords_transmute, % point.x ", " point.y
 	Gui, Add, Text, vui_coords_transmute ys+3 gNOP, Transmute (px)
 	cb_coords_transmute(CtrlHwnd) {
-		msg := Format("Place mouse over {} and press {}", "Transmute Button", KEY_WAIT)
-		point := prompt_mouse_coords(KEY_WAIT, msg, D2_WINDOW)
+		point := prompt_mouse_coords("Shift", "Transmute Button", D2_WINDOW)
 		if (point) {
 			config.user.coords_transmute := point
 			GuiControl,, % CtrlHwnd, % point.x ", " point.y

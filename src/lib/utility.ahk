@@ -38,15 +38,16 @@ block_mouse_input(state) {
     }
 }
 
-prompt_mouse_coords(target_key, msg, win_title:="") {
+prompt_mouse_coords(key_trigger, hover_target_str, win_title:="") {
     result := false
+    msg := Format("Place mouse over {} and press {}", hover_target_str, key_trigger)
 
     if (hwnd := WinExist(win_title)) {
         MsgBox, 1, Get Coords, % msg
         IfMsgBox, OK
         {
             WinActivate, % "ahk_id " hwnd
-            KeyWait, % target_key, D
+            KeyWait, % key_trigger, D
             MouseGetPos, mX, mY
             result := {"x": mX, "y": mY}
         }

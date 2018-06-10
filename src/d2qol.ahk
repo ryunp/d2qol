@@ -38,11 +38,10 @@ if not A_IsAdmin {
 ;------------------
 
 ; Global Vars
-global APP_VERSION := "1.4.2"
+global APP_VERSION := "1.5.0"
 global CONFIG_FILE := "d2qol.json"
 global D2_WINDOW := "Diablo II ahk_class Diablo II"
 global GAME_FPS := 25
-global KEY_WAIT := "Shift"
 global HWND_WIN_MAIN := 0
 
 ; Define UI action mapping

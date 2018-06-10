@@ -1,4 +1,4 @@
-# d2QoL v1.4.2
+# d2QoL v1.5.0
 ## AutoHotKey based utility for a Diablo II mod Median XL to reduce stress on fingers and wrist.
 
 Median XL's end-game requires highly repetitive crafting mechanics. Working with the cube slowly not only eats away at game time, but can also cause physical stress on the wrists and fingers. Since the nature of these actions is so well defined, it makes perfect target for automation. This was designed foremost as a crafting QoL utility, but it easily extends out to enhance normal gameplay.
@@ -49,7 +49,7 @@ Quickly reducing shrines into vessels
 ![Reducing shrines into vessel](media/d2qol_shrines.gif)
 
 ### Bugs & Feedback
-Tested under English version of Windows 7, 8, 10. If you leave an issue report please include OS version, error messages, config data, and specific changes before the error occurred.
+Tested under English version of Windows XP, 7, 8, 10. If you leave an issue report please include OS version, error messages, config data, and specific changes before the error occurred.
 
 This was designed and tested under windowed 800x600 resolution and DDraw. Everything is based on user defined x,y locations, and the sequence of UI commands is nearly identical to human execution. *What can go wrong?™*
 
@@ -62,6 +62,9 @@ This was designed and tested under windowed 800x600 resolution and DDraw. Everyt
 
 
 ### Changelog
+**1.5.0 - 6/10/18**
+* Moved from 64-bit to 32-bit binary
+
 **1.4.2 - 5/26/18**
 * Added link to forum
 * Updated clicker setting tooltip
