@@ -5,7 +5,7 @@ Median XL's end-game requires highly repetitive crafting mechanics. Working with
 
 This utility does nothing more than clicks on command in locations you have specified. There is no memory peeking, no gameplay logic, nothing outside the capabilities a human can perform.
 
-General feedback and discussion is facilitated at the [Median XL forum thread](https://forum.median-xl.com/viewtopic.php?f=4&t=3302&sid=a2d830fa9aefb97dcc5264fc48caab65).
+General feedback and discussion is facilitated at the [Median XL forum thread](https://forum.median-xl.com/viewtopic.php?f=4&t=3302).
 
 ### Features
 * Supports all resolutions
