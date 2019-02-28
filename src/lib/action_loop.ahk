@@ -28,7 +28,7 @@ Class Action_Loop {
         fn := this.tick_fn
         SetTimer, % fn, % delay
 
-        this.callbacks.start.Call(this._current_tick, this.quantity, this.delay)
+        this.callbacks.start.Call(this.current_tick, this.quantity, this.delay)
     }
 
     stop() {
@@ -36,8 +36,8 @@ Class Action_Loop {
 
         fn := this.tick_fn
         setTimer, % fn, Off
-        
-        this.callbacks.stop.Call(this._current_tick, this.quantity, this.delay)
+
+        this.callbacks.stop.Call(this.current_tick, this.quantity, this.delay)
     }
 
     tick() {

@@ -33,7 +33,7 @@ cb_repeat_clicks_stop(current, quantity, delay) {
 
     ; Optional notify progress
     if (config.actions.Repeat_Clicks.notify_progress) {
-        TrayTip, d2qol Clicker, Stopped
+        TrayTip, d2qol Clicker, % "Stopped at iteration #" current
     }
 }
 
